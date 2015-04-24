@@ -15,6 +15,7 @@
             var options = {
                 title: 'Current Mounth',
                 is3D: true,
+                backgroundColor: 'white',
             };
 
             var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
@@ -26,5 +27,10 @@
     class="active"
 {% endblock %}
 {% block content %}
-    <div id="piechart_3d" style="width: 900px; height: 500px;"></div>
+    <div class="highlight">
+        <div class="panel panel-default" id="main-chart">
+            <div id="piechart_3d" style="width: 900px; height: 500px;"></div>
+        </div>
+    </div>
+           
 {% endblock %}

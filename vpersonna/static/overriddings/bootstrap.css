@@ -12,3 +12,8 @@
     position: relative;
     top: +25px;
 }
+
+#main-chart.panel.panel-default{
+    width: 50%;
+    margin: 0 auto;
+}
