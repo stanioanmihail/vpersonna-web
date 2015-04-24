@@ -1,6 +1,30 @@
 {% extends 'profile/base.html' %}
+{% block header %}
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"]});
+        google.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Trafic Type', 'Number of hours'],
+                {% for traffic_type, value in dashboard_dict.items %}
+                ['{{ traffic_type }}', {{ value }}],
+                {% endfor %}
+            ]);
+
+            var options = {
+                title: 'Current Mounth',
+                is3D: true,
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+            chart.draw(data, options);
+      }
+    </script>
+{% endblock header %}
 {% block nav-dash %}
-class="active"
+    class="active"
 {% endblock %}
 {% block content %}
+    <div id="piechart_3d" style="width: 900px; height: 500px;"></div>
 {% endblock %}
