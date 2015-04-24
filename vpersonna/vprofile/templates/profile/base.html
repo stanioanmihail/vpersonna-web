@@ -1,16 +1,31 @@
 <head>
-<link href="/static/bootstrap-3.3.4-dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="/static/overriddings/bootstrap.css" rel="stylesheet">
+    <link href="/static/bootstrap-3.3.4-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/overriddings/bootstrap.css" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet" type="text/css">
+
 </head>
 <body>
-<nav class="navbar navbar-inverse" id="banner">
-<span class="label label-default">Default</span>
-<span class="label label-primary">Primary</span>
-<span class="label label-success">Success</span>
-<span class="label label-info">Info</span>
-<span class="label label-warning">Warning</span>
-<span class="label label-danger">Danger</span>
-</nav>
+    <nav class="navbar navbar-inverse" id="banner">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{% url 'dashboard' %}" id="brand">vPersonna</a>
+            </div>
+            <div id="pages-bar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li {% block nav-dash %}{% endblock nav-dash %} >
+                        <a href="{% url 'dashboard' %}" id="dashboard-link">Dashboard</a></li>
+                    <li {% block nav-adv-stats %}{% endblock nav-adv-stats %}>
+                        <a href="{% url 'stats' %}" id="advanced-stats">Advanced Statistics</a></li>
+                    <li {% block nav-res-mng %}{% endblock nav-res-mng %}>
+                        <a href="{% url 'manage' %}" id="res-mng">Resources Management</a></li>
+                    <li {% block nav-offers %}{% endblock nav-offers %}>
+                        <a href="{% url 'offers' %}" id="offers">Offers</a></li>
+                    <li {% block nav-transactions %}{% endblock nav-transactions %}>
+                        <a href="{% url 'transactions' %}" id="transactions">Transaction History</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 {% block content %}
 {% endblock %}
 </body>
