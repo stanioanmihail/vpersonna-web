@@ -16,4 +16,9 @@
 #main-chart.panel.panel-default{
     width: 50%;
     margin: 0 auto;
+    float: center;
+}
+#top-sites-frame.panel.panel-default{
+    overflow: auto;
+    width: auto;
 }

@@ -13,8 +13,16 @@ def dashboard(request):
         'FTP' : 3,
     
     }
+    top_rate_sites_matrix = [
+        ["www.facebook.com","66.220.152.19", 480],
+        ["www.google.com", "173.194.112.178", 124],
+        ["www.9gag.com", "54.215.82.230", 100],
+        ["www.youtube.com", "217.73.160.236", 80],
+    ]
+    
     context = RequestContext(request, {
         'dashboard_dict':dashboard_dict,
+        'top_rate_sites_matrix':top_rate_sites_matrix,
     })
     return HttpResponse(template.render(context))
     #	return render(request, 'profile/dashboard.html', {})

@@ -28,6 +28,22 @@
 {% endblock %}
 {% block content %}
     <div class="highlight">
+        <div class="panel panel-default" id="top-sites-frame">
+            <table class="table" id="top-sites">
+                <tr>
+                    <th>Top Ranked</th>
+                    <th>IP</th>
+                    <th>Accessed</th>
+                </tr>
+                {% for domain,ip,access in top_rate_sites_matrix %}
+                <tr>
+                    <td>{{ domain }} </td>
+                    <td>{{ ip }} </td>
+                    <td>{{ access }} </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
         <div class="panel panel-default" id="main-chart">
             <div id="piechart_3d" style="width: 900px; height: 500px;"></div>
         </div>
