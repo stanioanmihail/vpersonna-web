@@ -15,9 +15,10 @@ def dashboard(request):
     }
     top_rate_sites_matrix = [
         ["www.facebook.com","66.220.152.19", 480],
-        ["www.google.com", "173.194.112.178", 124],
-        ["www.9gag.com", "54.215.82.230", 100],
-        ["www.youtube.com", "217.73.160.236", 80],
+        ["www.google.com", "173.194.112.178", 304],
+        ["www.9gag.com", "54.215.82.230", 211],
+        ["www.youtube.com", "217.73.160.236", 120],
+        ["www.engadget.com", "195.93.85.193", 80],
     ]
     
     context = RequestContext(request, {
