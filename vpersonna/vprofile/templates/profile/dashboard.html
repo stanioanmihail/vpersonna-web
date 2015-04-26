@@ -5,48 +5,125 @@
         google.load("visualization", "1", {packages:["corechart"]});
         google.setOnLoadCallback(drawChart);
         function drawChart() {
-            var data = google.visualization.arrayToDataTable([
+            var data_piechart = google.visualization.arrayToDataTable([
                 ['Trafic Type', 'Number of hours'],
                 {% for traffic_type, value in dashboard_dict.items %}
                 ['{{ traffic_type }}', {{ value }}],
                 {% endfor %}
             ]);
 
-            var options = {
-                title: 'Current Mounth',
+            var data_donut_old = google.visualization.arrayToDataTable([
+                ['Trafic Type', 'Number of hours'],
+                {% for traffic_type, value in dashboard_dict.items %}
+                ['{{ traffic_type }}', {{ value }}],
+                {% endfor %}
+            ]);
+
+            var data_donut_older = google.visualization.arrayToDataTable([
+                ['Trafic Type', 'Number of hours'],
+                {% for traffic_type, value in dashboard_dict.items %}
+                ['{{ traffic_type }}', {{ value }}],
+                {% endfor %}
+            ]);
+
+            var data_donut_oldest = google.visualization.arrayToDataTable([
+                ['Trafic Type', 'Number of hours'],
+                {% for traffic_type, value in dashboard_dict.items %}
+                ['{{ traffic_type }}', {{ value }}],
+                {% endfor %}
+            ]);
+
+            var d = new Date();
+            var month = new Array();
+            month[0] = "January";
+            month[1] = "February";
+            month[2] = "March";
+            month[3] = "April";
+            month[4] = "May";
+            month[5] = "June";
+            month[6] = "July";
+            month[7] = "August";
+            month[8] = "September";
+            month[9] = "October";
+            month[10] = "November";
+            month[11] = "December";
+
+            var n = month[d.getMonth()]; 
+            var options_3d_piechart = {
+                title: 'May (current)',
                 is3D: true,
                 backgroundColor: 'white',
             };
+            var options_donutchart_old = {
+                title: 'April',
+                pieHole: 0.4,
+                legend: {position: 'none'},
+            };
+            var options_donutchart_older = {
+                title: 'March',
+                pieHole: 0.4,
+                legend: {position: 'none'},
+            };
+            var options_donutchart_oldest = {
+                title: 'February',
+                pieHole: 0.4,
+                legend: {position: 'none'},
+            };
 
-            var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
-            chart.draw(data, options);
+
+
+            var chart_piechart_3d = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+            chart_piechart_3d.draw(data_piechart, options_3d_piechart);
+            var chart_donutchart_old = new google.visualization.PieChart(document.getElementById('donutchart-old'));
+            chart_donutchart_old.draw(data_donut_old, options_donutchart_old);
+            var chart_donutchart_older = new google.visualization.PieChart(document.getElementById('donutchart-older'));
+            chart_donutchart_older.draw(data_donut_older, options_donutchart_older);
+            var chart_donutchart_oldest = new google.visualization.PieChart(document.getElementById('donutchart-oldest'));
+            chart_donutchart_oldest.draw(data_donut_oldest, options_donutchart_oldest);
       }
     </script>
+
+    
 {% endblock header %}
 {% block nav-dash %}
     class="active"
 {% endblock %}
 {% block content %}
-    <div class="highlight">
-        <div class="panel panel-default" id="top-sites-frame">
-            <table class="table" id="top-sites">
-                <tr>
-                    <th>Top Ranked</th>
-                    <th>IP</th>
-                    <th>Accessed</th>
-                </tr>
-                {% for domain,ip,access in top_rate_sites_matrix %}
-                <tr>
-                    <td>{{ domain }} </td>
-                    <td>{{ ip }} </td>
-                    <td>{{ access }} </td>
-                </tr>
-                {% endfor %}
-            </table>
+    <div id="highlight">
+        <div class="panel panel-default" id="last-mounths-charts"> 
+            
+            <div class="panel" id="last-mounth-chart"> 
+                <div id="donutchart-old" style="width: 100%; height: 100%;"></div>
+            </div>
+            <div class="panel" id="two-mounths-chart"> 
+                <div id="donutchart-older" style="width: 100%; height: 100%;"></div>
+            </div>
+            <div class="panel" id="three-mounths-chart"> 
+                <div id="donutchart-oldest" style="width: 100%; height: 100%;"></div>
+            </div>
         </div>
-        <div class="panel panel-default" id="main-chart">
-            <div id="piechart_3d" style="width: 900px; height: 500px;"></div>
+        <div class="panel panel-default" id="current-mounth-chart"> 
+            <div id="piechart_3d" style="width: 100%; height: 100%;"></div>
         </div>
+        <div class="panel panel-default" id="empty-slot"> 
+        </div>
+    </div>
+    <div class="panel panel-default" id="top-sites-frame">
+        <table class="table" id="top-sites">
+            <tr>
+                <th></th>
+                <th>Top 5 Accessed Sites</th>
+                <th></th>
+            </tr>
+            {% for domain,ip,access in top_rate_sites_matrix %}
+            <tr>
+                <td>{{ domain }} </td>
+                <td>{{ ip }} </td>
+                <td>{{ access }} </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
     </div>
            
 {% endblock %}
