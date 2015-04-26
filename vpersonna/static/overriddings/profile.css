@@ -24,43 +24,47 @@
     /*visibility: hidden;*/
 }
 
-#last-mounths-charts.panel.panel-default{
+#last-mounths-charts.panel{
     width: 20%;
     height: 600px;
     float:left;
     display: table-cell;
+    box-shadow: 0px 0px 0px white;
 }
 
-#last-mounth-chart.panel{
+#last-mounth-chart.panel, #two-mounths-chart.panel, #three-mounths-chart.panel{
     width: 100%;
     height: 33%;
     margin-bottom: 0px;
+    box-shadow: 0px 0px 0px white;
 }
-#two-mounths-chart.panel{
-    width: 100%;
-    height: 33%;
-    margin-bottom: 0px;
-}
-#three-mounths-chart.panel{
-    width: 100%;
-    height: 33%;
-    margin-bottom: 0px;
-}
-#current-mounth-chart.panel.panel-default{
+#current-mounth-chart.panel{
     width: 60%;
     height: 600px;
     float: center;
     display: inline-block;
+    box-shadow: 0px 0px 0px white;
 }
 #news-slot{
     width: 20%;
     height: 600px;
     float: right;
     display: inline-block;
+    box-shadow: 0px 0px 0px white;
 }
 
 #news-feed.bs-callout.bs-callout-info{
     margin: 0px 0px;
 	max-height: 100%; 
     overflow-y: auto;
-};
+}
+#footer{
+    height: 60px;
+    background-color: #F5F5F5;
+    top: +60px;
+    position: relative;
+}
+
+#dashboard-header.page-header{
+    margin-bottom: 0px;
+}

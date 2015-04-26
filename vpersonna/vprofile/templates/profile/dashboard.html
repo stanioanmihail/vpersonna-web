@@ -101,8 +101,11 @@
     class="active"
 {% endblock %}
 {% block content %}
+    <div class="page-header" id="dashboard-header">
+        <h1> Dashboard </h1>
+    </div>
     <div id="highlight">
-        <div class="panel panel-default" id="last-mounths-charts"> 
+        <div class="panel" id="last-mounths-charts"> 
             
             <div class="panel" id="last-mounth-chart"> 
                 <div id="donutchart-old" style="width: 100%; height: 100%;"></div>
@@ -114,7 +117,7 @@
                 <div id="donutchart-oldest" style="width: 100%; height: 100%;"></div>
             </div>
         </div>
-        <div class="panel panel-default" id="current-mounth-chart"> 
+        <div class="panel" id="current-mounth-chart"> 
             <div id="piechart_3d" style="width: 100%; height: 100%;"></div>
         </div>
         <div  id="news-slot"> 
@@ -139,7 +142,6 @@
             </tr>
             {% endfor %}
         </table>
-    </div>
     </div>
            
 {% endblock %}
