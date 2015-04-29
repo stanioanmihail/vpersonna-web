@@ -2,7 +2,7 @@
 {% block header %}
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript">
-        google.load("visualization", "1", {packages:["corechart"]});
+        google.load("visualization", "1", {packages:["corechart", "bar"]});
         google.setOnLoadCallback(drawChart);
         function drawChart() {
             var data_piechart = google.visualization.arrayToDataTable([
@@ -32,6 +32,13 @@
                 ['{{ traffic_type }}', {{ value }}],
                 {% endfor %}
             ]);
+
+            var data_linechart_topsites = google.visualization.arrayToDataTable([
+                ['Site', 'Rank'],
+                {% for domain,ip,access in top_rate_sites_matrix %}
+                ['{{ domain }}', {{ access }}],
+                {% endfor %}
+            ]);    
 
             var today = new Date();
             var last_date = new Date();
@@ -83,6 +90,20 @@
             };
 
 
+            var options_linechart_topsites = {
+                title: 'Top 5 Sites',
+                legend: { position: 'none' },
+                chart: { title: 'Top 5 Sites',
+                    subtitle: 'popularity by number of accesses' },
+                bars: 'horizontal', // Required for Material Bar Charts.
+                axes: {
+                    x: {
+                        0: { side: 'top', label: 'Accesses'} // Top x-axis.
+                    }
+                },
+                bar: { groupWidth: "90%" }
+            };
+
 
             var chart_piechart_3d = new google.visualization.PieChart(document.getElementById('piechart_3d'));
             chart_piechart_3d.draw(data_piechart, options_3d_piechart);
@@ -92,9 +113,10 @@
             chart_donutchart_older.draw(data_donut_older, options_donutchart_older);
             var chart_donutchart_oldest = new google.visualization.PieChart(document.getElementById('donutchart-oldest'));
             chart_donutchart_oldest.draw(data_donut_oldest, options_donutchart_oldest);
+            var chart_linechart_topsites = new google.charts.Bar(document.getElementById('top_x_div'));
+            chart_linechart_topsites.draw(data_linechart_topsites, options_linechart_topsites);
       }
     </script>
-
     
 {% endblock header %}
 {% block nav-dash %}
@@ -104,7 +126,7 @@
     <div class="page-header" id="dashboard-header">
         <h1> Dashboard </h1>
     </div>
-    <div id="highlight">
+    <div id="traffic-statistics-frame">
         <div class="panel" id="last-mounths-charts"> 
             
             <div class="panel" id="last-mounth-chart"> 
@@ -127,21 +149,26 @@
             </div>
         </div>
     </div>
-    <div class="panel panel-default" id="top-sites-frame">
-        <table class="table" id="top-sites">
-            <tr>
-                <th></th>
-                <th>Top 5 Accessed Sites</th>
-                <th></th>
-            </tr>
-            {% for domain,ip,access in top_rate_sites_matrix %}
-            <tr>
-                <td>{{ domain }} </td>
-                <td>{{ ip }} </td>
-                <td>{{ access }} </td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div id="top-sites-frame">
+        <div class="panel" id="top-sites-table-panel">
+            <table class="table" id="top-sites">
+                <tr>
+                    <th></th>
+                    <th>Top 5 Accessed Sites</th>
+                    <th></th>
+                </tr>
+                {% for domain,ip,access in top_rate_sites_matrix %}
+                <tr>
+                    <td>{{ domain }} </td>
+                    <td>{{ ip }} </td>
+                    <td>{{ access }} </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="panel" id="top-sites-chart-panel">
+            <div id="top_x_div" style="width: 80%; height: 100%;"></div>
+        </div>
     </div>
            
 {% endblock %}
