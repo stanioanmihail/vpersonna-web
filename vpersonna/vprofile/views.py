@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import RequestContext, loader
+from django.utils.timezone import utc
+import datetime
 
 # Create your views here.
 def dashboard(request):
@@ -27,8 +29,19 @@ def dashboard(request):
     })
     return HttpResponse(template.render(context))
     #	return render(request, 'profile/dashboard.html', {})
+
+
 def stats(request):
+         
 	return render(request, 'profile/advanced_statistics.html', {})
+def stats_date(request):
+    template = loader.get_template('profile/stats_by_date.html')
+    date = request.POST['datepicker'] 
+    context = RequestContext(request, {
+        'date': date,
+    })
+    return HttpResponse(template.render(context))
+	#return render(request, 'profile/stats_by_date.html', {})
 def manage(request):
 	return render(request, 'profile/resources_mng.html', {})
 def offers(request):

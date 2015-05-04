@@ -7,5 +7,6 @@ urlpatterns = [
     url(r'^manage$', views.manage, name="manage"),
     url(r'^offers$', views.offers, name="offers"),
     url(r'^transactions$', views.transactions, name="transactions"),
+    url(r'^date$', views.stats_date, name="stats_date"),
 ]
 
