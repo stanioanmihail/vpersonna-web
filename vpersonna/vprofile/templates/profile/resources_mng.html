@@ -1,6 +1,60 @@
 {% extends 'profile/base.html' %}
+{% block header %}
+<script type="text/javascript">
+
+     $(document).ready(function(){
+        var i = 0;
+        $("#add_row").click(function(){
+            $('#addr' + i).html(
+                    "<td>"+ (i + 1) + "</td>" +
+                    "<td><input name='name" + i + "' type='text' placeholder='Service' class='form-control input-md'  /></td>" + 
+                    "<td><input name='mail" + i + "' type='text' placeholder='Percentage' class='form-control input-md'></td>" + 
+                    "<td><input name='mobile" + i + "' type='text' placeholder='Destination' class='form-control input-md'></td>");
+
+            $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
+            i++; 
+        });
+
+        $("#delete_row").click(function(){
+            if(i > 0){
+                $("#addr" + (i - 1)).html('');
+                i--;
+            }
+        });
+
+    });
+</script>
+{% endblock header %}
 {% block nav-res-mng %}
 class="active"
 {% endblock %}
 {% block content %}
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <table class="table table-bordered table-hover" id="tab_logic">
+                    <thead>
+                        <tr >
+                            <th class="text-center">
+                                #
+                            </th>
+                            <th class="text-center">
+                                Service
+                            </th>
+                            <th class="text-center">
+                                Percentage
+                            </th>
+                            <th class="text-center">
+                                Destination
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id='addr0'></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <a id="add_row" class="btn btn-default pull-left">Add Row</a>
+        <a id='delete_row' class="pull-right btn btn-default">Delete Row</a>
 {% endblock %}
