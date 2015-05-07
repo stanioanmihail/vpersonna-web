@@ -1,3 +1,14 @@
+/* ADVANCED Statistics */
+#date-panel{
+    width: auto;
+    margin: 0 auto;
+}
+#date-submit-button-div{
+    display: inline-block;
+}
+#datepicker-textbox-div{
+    display: inline-block;
+}    
 /* DASHBOARD */
 
 /*charts zone */
@@ -66,17 +77,17 @@
 /* banner*/
 #banner.navbar.navbar-inverse{
 	background-color: #121; 
-	min-height: 100px; 
+/*	min-height: 100px; */
 }
 #brand.navbar-brand{
     font-family: 'Indie Flower';
     font-size: 2.5em;
-    position: relative;
-    top: +25px;
+/*    position: relative; */
+/*    top: +25px; */
 }
 #pages-bar{
-    position: relative;
-    top: +25px;
+/*    position: relative;*/
+/*    top: +25px;*/
 }
 
 /* title zone */

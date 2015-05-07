@@ -11,11 +11,16 @@
 class="active"
 {% endblock %}
 {% block content %}
-<div class='panel'>
+<div class="input-group" id="date-panel">
     <form method="post" action="date">
-        <p>Date: <input type="text" id="datepicker" name="datepicker"></p>
-        {% csrf_token %}
-        <button class="btn btn-primary" type="submit" name="submit-date">Submit</button>
+        <div id="datepicker-textbox-div">
+            <p><center> Choose a date: </center></p>
+            <input type="text" id="datepicker" name="datepicker">
+            {% csrf_token %}
+        </div>
+        <div id="date-submit-button-div">
+            <button class="btn btn-primary" type="submit" name="submit-date" id="date-submit-button">Submit</button>
+        </div>
     </form>
 </div>
 {% endblock %}
