@@ -1,60 +1,122 @@
 {% extends 'profile/base.html' %}
 {% block header %}
-<script type="text/javascript">
+    <link rel="stylesheet" href="/static/jquery/css/jquery-ui.css" />
+    <script src="/static/jquery/js/jquery-1.11.3.js" type="text/javascript"></script>
+    <script src="/static/jquery/js/jquery-ui.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="/static/overriddings/table.css" />
+    <script type="text/javascript">
+        $(function () { 
+            var new_dialog = function (type, row) {
+                var dlg = $("#dialog-form").clone();
+                var serv = dlg.find(("#service")),
+                    percent = dlg.find(("#percentage")),
+                    destination = dlg.find(("#destination")),
+                    type = type || 'Create';
 
-     $(document).ready(function(){
-        var i = 0;
-        $("#add_row").click(function(){
-            $('#addr' + i).html(
-                    "<td>"+ (i + 1) + "</td>" +
-                    "<td><input name='name" + i + "' type='text' placeholder='Service' class='form-control input-md'  /></td>" + 
-                    "<td><input name='mail" + i + "' type='text' placeholder='Percentage' class='form-control input-md'></td>" + 
-                    "<td><input name='mobile" + i + "' type='text' placeholder='Destination' class='form-control input-md'></td>");
+                var config = {
+                        autoOpen: true,
+                        height: 300,
+                        width: 350,
+                        modal: true,
+                        buttons: {
+                            "Create a new rule": save_data,
+                            "Cancel": function () {
+                                dlg.dialog("close");
+                            }
+                        },
+                        close: function () {
+                                dlg.remove();
+                        }
+                };
 
-            $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
-            i++; 
+                if (type === 'Edit') {
+                    config.title = "Edit Rule";
+                    get_data();
+                    delete (config.buttons['Create a new rule']);
+                    config.buttons['Edit rule'] = function () {
+                        row.remove();
+                        save_data(); 
+                    }; 
+
+                }
+
+                dlg.dialog(config); 
+                function get_data() {
+                    var _destination = $(row.children().get(2)).text(),
+                        _percent = $(row.children().get(1)).text();
+                    destination.val(_destination);
+                    percent.val(_percent); 
+                } 
+
+                function save_data() {
+                    $("#users tbody").append(
+                    "<tr>" + 
+                    "<td>" + (serv.find("option:selected").text() + ' ') + "</td>" + 
+                    "<td>" + percent.val() + "</td>" +
+                    "<td>" + destination.val() + "</td>" + 
+                    "<td><a href='' class='edit'>Edit</a></td>" + 
+                    "<td><span class='delete'><a href=''>Delete</a></span></td>" + 
+                    "</tr>");
+                    dlg.dialog("close");
+                }
+            }; 
+            $(document).on('click', 'span.delete', function () {
+                $(this).closest('tr').find('td').fadeOut(1000, 
+                    function () {
+                        // alert($(this).text());
+                        $(this).parents('tr:first').remove();
+                }); 
+                return false;
+            });
+            $(document).on('click', 'td a.edit', function () {
+                new_dialog('Edit', $(this).parents('tr'));
+                return false;
+            }); 
+            $("#create-rule").button().click(new_dialog); 
         });
-
-        $("#delete_row").click(function(){
-            if(i > 0){
-                $("#addr" + (i - 1)).html('');
-                i--;
-            }
-        });
-
-    });
-</script>
+    </script>
 {% endblock header %}
 {% block nav-res-mng %}
 class="active"
 {% endblock %}
 {% block content %}
-    <div class="container">
-        <div class="row clearfix">
-            <div class="col-md-12 column">
-                <table class="table table-bordered table-hover" id="tab_logic">
-                    <thead>
-                        <tr >
-                            <th class="text-center">
-                                #
-                            </th>
-                            <th class="text-center">
-                                Service
-                            </th>
-                            <th class="text-center">
-                                Percentage
-                            </th>
-                            <th class="text-center">
-                                Destination
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr id='addr0'></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <a id="add_row" class="btn btn-default pull-left">Add Row</a>
-        <a id='delete_row' class="pull-right btn btn-default">Delete Row</a>
+ <div id="dialog-form" title="Add new rule">
+        <p class="validateTips">All form fields are required.</p>       
+        <form>
+            <fieldset>
+                <label for="service-label"> Type of Service </label>
+
+                <select id="service">
+                    <option value="1">Video</option>
+                    <option value="2">Audio</option>
+                    <option value="3">Bittorrent</option>
+                    <option value="4">Default</option>
+                </select>
+
+                <label for="percentage-label">  % bandwidth </label>
+                <input type="text" name="percentage" id="percentage" value="" class="text ui-widget-content ui-corner-all" />
+
+                <label for="destination-label"> destination (optional) </label>
+                <input type="text" name="destination" id="destination" value="" class="text ui-widget-content ui-corner-all" />
+        
+            </fieldset>
+        </form>
+
+    </div>
+    <div id="users-contain" class="ui-widget">
+        <h1> Rules:</h1>
+        <table id="users" class="ui-widget ui-widget-content">
+            <thead>
+                <tr class="ui-widget-header ">
+                    <th> Type of Service  </th>
+                    <th> Bandwidth (%) </th>
+                    <th> Destination </th>
+                    <th> Actions </th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <button id="create-rule"> Add new rule </button>   
 {% endblock %}
