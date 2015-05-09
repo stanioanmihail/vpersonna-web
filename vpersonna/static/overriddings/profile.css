@@ -4,10 +4,12 @@
     margin: 0 auto;
 }
 #date-submit-button-div{
-    display: inline-block;
+    padding-top: 5px;
+    margin: auto;
+    width: 50%;
+    height: 50%
 }
 #datepicker-textbox-div{
-    display: inline-block;
 }    
 /* DASHBOARD */
 
