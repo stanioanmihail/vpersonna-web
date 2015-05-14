@@ -65,6 +65,32 @@ def stats_date(request):
                 'VoIP': 10, 'HTTP (non-video)': 5, 'BitTorrent': 10, 'Video': 15
                 },
             }
+     #traffic_per_timeslot = {
+     #       '08-10': {
+     #           'VoIP': "0.10%", 'HTTP (non-video)': "0.20%", 'BitTorrent': "0.30%", 'Video': "0.15%"
+     #           },
+     #       '10-12': {
+     #           'VoIP': "0.10%", 'HTTP (non-video)': "0.20%", 'BitTorrent': "0.30%", 'Video': "0.15%"
+     #           },
+     #       '12-14': {
+     #           'VoIP': "0.05%", 'HTTP (non-video)': "0.02%", 'BitTorrent': "0.20%", 'Video': "0.05%"
+     #           },
+     #       '14-16': {
+     #           'VoIP': "0.05%", 'HTTP (non-video)': "0.00%", 'BitTorrent': "0.00%", 'Video': "0.01%"
+     #           },
+     #       '16-18': {
+     #           'VoIP': "0.03%", 'HTTP (non-video)': "0.04%", 'BitTorrent': "0.04%", 'Video': "0.03%"
+     #           },
+     #      '18-20': {
+     #          'VoIP': "0.05%", 'HTTP (non-video)': "0.02%", 'BitTorrent': "0.17%", 'Video': "0.20%"
+     #           },
+     #       '20-22': {
+     #           'VoIP': "0.05%", 'HTTP (non-video)': "0.10%", 'BitTorrent': "0.30%", 'Video': "0.30%"
+     #           },
+     #       '22-24': {
+     #          'VoIP': "0.10%", 'HTTP (non-video)': "0.05%", 'BitTorrent': "0.10%", 'Video': "0.15%"
+     #          },
+     #      }
     context = RequestContext(request, {
         'date': date,
         'traffic_per_timeslot': OrderedDict(sorted(traffic_per_timeslot.items(), key=lambda t: t[0])),
