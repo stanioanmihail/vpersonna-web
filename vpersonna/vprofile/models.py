@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 
 # Create your models here.
 class Client(models.Model):
-    client_id = models.IntegerField('Client ID', blank=False)
+    client_id = models.IntegerField('Client ID', blank=False, primary_key=True)
     client_name = models.CharField('Client Name', max_length=200)
     phone_regex = RegexValidator(regex='^\\+?1?\\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone_number = models.CharField('Phone Number', validators=[phone_regex], blank=True, max_length=20)
@@ -17,3 +17,16 @@ class Client(models.Model):
     username = models.CharField('Username ', validators=[uname_regex], blank=True, max_length=20)
     password = models.CharField('Password ', blank=True, max_length=20)
 
+class ServiceType(models.Model):
+    #service_id = models.IntegerField('Service id', blank=False, primary_key=True)
+    service_id = models.AutoField(primary_key=True)
+    service_name = models.CharField('Service name', blank=False, max_length=25)
+    def __str__(self):
+        return self.service_name
+
+class Rule(models.Model):
+    #rule_id = models.IntegerField('Rule id', blank=False, primary_key=True)
+    rule_id = models.AutoField(primary_key=True)
+    type_of_service = models.ForeignKey(ServiceType) 
+    bandwidth_percent = models.IntegerField('Bandwidth Percent', blank=False)
+    destination_address = models.CharField('Destination URL', blank=True, max_length='200')

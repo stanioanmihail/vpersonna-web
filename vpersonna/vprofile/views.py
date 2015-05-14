@@ -3,7 +3,11 @@ from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.utils.timezone import utc
 from collections import OrderedDict
+from .forms import RuleForm
 import datetime
+from django.shortcuts import redirect
+from vprofile.models import Rule
+
 
 # Create your views here.
 def dashboard(request):
@@ -101,6 +105,25 @@ def stats_date(request):
 	#return render(request, 'profile/stats_by_date.html', {})
 def manage(request):
 	return render(request, 'profile/resources_mng.html', {})
+def manage2(request):
+    rules_list = Rule.objects.all() 
+    template = loader.get_template('profile/resources_mng2.html')
+    context = RequestContext(request, {
+        'rules_list': rules_list,
+        })
+    return HttpResponse(template.render(context))
+	#return render(request, 'profile/resources_mng2.html', {})
+def rule_new(request):
+    if request.method == "POST":
+        form = RuleForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('/manage2')
+    else:
+        form = RuleForm()
+    return render(request, 'profile/rule_new.html', {'form':form})
 def offers(request):
 	return render(request, 'profile/offers.html', {})
 def transactions(request):

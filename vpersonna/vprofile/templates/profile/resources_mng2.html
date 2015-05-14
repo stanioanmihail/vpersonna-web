@@ -1,0 +1,9 @@
+{% extends 'profile/base.html' %}
+{% block header %}
+{% endblock %}
+{% block content %}
+    <a href="{% url 'vprofile.views.rule_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+    {% for rule in rules_list %}
+        <p> {{ rule.id }} {{ rule.type_of_service }} {{ rule.bandwidth_percent }} {{ rule.destination_address }} </p> <br/>
+    {% endfor %} 
+{% endblock %}
