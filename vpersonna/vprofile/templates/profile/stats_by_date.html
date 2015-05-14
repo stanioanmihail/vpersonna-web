@@ -1,5 +1,40 @@
 {% extends 'profile/base.html' %}
 {% block header %}
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"]});
+        google.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                [
+                'Timeslot',
+                {% for t in tag_list %}
+                '{{ t }}',
+                {% endfor %}
+                { role: 'annotation' }
+                ],
+                {% for k, v in traffic_per_timeslot.items %}
+                        ['{{ k }}',
+                    {% for k2, v2 in v.items %}
+                        {{ v2 }},
+                    {% endfor %}
+                        ''],
+                {% endfor %}
+            ]);
+            var options = {
+                title: 'Traffic by time of day',
+                width: 600,
+                height: 400,
+                legend: { position: 'top', maxLines: 3 },
+                bar: { groupWidth: '75%' },
+                isStacked: true
+            };
+
+            var schedule_chart = new google.visualization.BarChart(document.getElementById("barchart-schedule"));
+            schedule_chart.draw(data, options);
+
+    }
+ </script>
 <script type="text/javascript" language="javascript">
     $(function() {
             $("#datepicker").datepicker({ dateFormat: 'dd-mm-yy' }).datepicker("setDate", new Date());
@@ -12,4 +47,5 @@ class="active"
 {% endblock %}
 {% block content %}
         <p>{{ date }}</p> 
+        <div id="barchart-schedule" style="width: 900px; height: 500px;"></div>
 {% endblock %}
