@@ -5,6 +5,9 @@
 class="active"
 {% endblock %}
 {% block content %}
+    <div class="alert alert-warning">
+        <strong> Warning! </strong> Your rules won't be saved if you pass the limit of 100%.  
+    </div>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -35,6 +38,13 @@ class="active"
             </tr>
         {% endfor %} 
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2"> <b> Total bandwidth left</b> </td>
+                <td> <b>  {{ total_bw_used }} / 100 </b> </td>
+                <td colspan="2"></td>
+            </tr>
+        </tfoot>
     <table>
-    <a href="{% url 'vprofile.views.rule_edit' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+    <a href="{% url 'vprofile.views.rule_edit' %}" class="top-menu">Add new rule  <span class="glyphicon glyphicon-plus"></span></a>
 {% endblock %}

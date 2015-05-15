@@ -105,14 +105,6 @@ def stats_date(request):
     return HttpResponse(template.render(context))
 	#return render(request, 'profile/stats_by_date.html', {})
 
-def manage(request):
-    rules_list = Rule.objects.all() 
-    template = loader.get_template('profile/resources_mng.html')
-    context = RequestContext(request, {
-        'rules_list': rules_list,
-        })
-    return HttpResponse(template.render(context))
-
 def compute_total_bandwidth():
     rules_list = Rule.objects.all() 
     bandwidth_total = 0
@@ -120,6 +112,15 @@ def compute_total_bandwidth():
     for rule in rules_list: 
         bandwidth_total = bandwidth_total + rule.bandwidth_percent
     return bandwidth_total
+
+def manage(request):
+    rules_list = Rule.objects.all() 
+    template = loader.get_template('profile/resources_mng.html')
+    context = RequestContext(request, {
+        'rules_list': rules_list,
+        'total_bw_used' : 100 - compute_total_bandwidth(),
+        })
+    return HttpResponse(template.render(context))
 
 def rule_edit(request):
 
