@@ -104,15 +104,13 @@ def stats_date(request):
     return HttpResponse(template.render(context))
 	#return render(request, 'profile/stats_by_date.html', {})
 def manage(request):
-	return render(request, 'profile/resources_mng.html', {})
-def manage2(request):
     rules_list = Rule.objects.all() 
-    template = loader.get_template('profile/resources_mng2.html')
+    template = loader.get_template('profile/resources_mng.html')
     context = RequestContext(request, {
         'rules_list': rules_list,
         })
     return HttpResponse(template.render(context))
-	#return render(request, 'profile/resources_mng2.html', {})
+
 def rule_edit(request):
     if request.method == "POST":
         form = RuleForm(request.POST)
@@ -120,7 +118,7 @@ def rule_edit(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            return redirect('/manage2')
+            return redirect('/manage')
     else:
         form = RuleForm()
     return render(request, 'profile/rule_edit.html', {'form':form})
@@ -133,7 +131,7 @@ def rule_update(request, pk):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            return redirect('/manage2')
+            return redirect('/manage')
     else:
         form = RuleForm(instance=rule)
     return render(request, 'profile/rule_edit.html', {'form':form})
@@ -141,7 +139,7 @@ def rule_update(request, pk):
 def rule_delete(request, pk):
     rule = get_object_or_404(Rule, pk=pk)
     rule.delete()
-    return redirect('/manage2')
+    return redirect('/manage')
 
 def offers(request):
 	return render(request, 'profile/offers.html', {})
