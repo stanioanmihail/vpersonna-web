@@ -5,7 +5,7 @@ from django.utils.timezone import utc
 from collections import OrderedDict
 from .forms import RuleForm
 import datetime
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from vprofile.models import Rule
 
 
@@ -113,7 +113,7 @@ def manage2(request):
         })
     return HttpResponse(template.render(context))
 	#return render(request, 'profile/resources_mng2.html', {})
-def rule_new(request):
+def rule_edit(request):
     if request.method == "POST":
         form = RuleForm(request.POST)
         if form.is_valid():
@@ -123,7 +123,26 @@ def rule_new(request):
             return redirect('/manage2')
     else:
         form = RuleForm()
-    return render(request, 'profile/rule_new.html', {'form':form})
+    return render(request, 'profile/rule_edit.html', {'form':form})
+
+def rule_update(request, pk):
+    rule = get_object_or_404(Rule, pk=pk)
+    if request.method == "POST":
+        form = RuleForm(request.POST, instance=rule)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('/manage2')
+    else:
+        form = RuleForm(instance=rule)
+    return render(request, 'profile/rule_edit.html', {'form':form})
+
+#def rule_delete(request, _id):
+#    rule = Rule.objects.get(pk = _id)
+#    rule.delete()
+#    return HttpResponse('delete')
+
 def offers(request):
 	return render(request, 'profile/offers.html', {})
 def transactions(request):

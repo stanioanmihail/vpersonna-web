@@ -2,8 +2,31 @@
 {% block header %}
 {% endblock %}
 {% block content %}
-    <a href="{% url 'vprofile.views.rule_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
-    {% for rule in rules_list %}
-        <p> {{ rule.id }} {{ rule.type_of_service }} {{ rule.bandwidth_percent }} {{ rule.destination_address }} </p> <br/>
-    {% endfor %} 
+    <a href="{% url 'vprofile.views.rule_edit' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th> # </th>
+                <th> Type of service </th>
+                <th> Bandwidth percent </th>
+                <th> Destination address (opt) </th>
+                <th> Actions </th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rule in rules_list %}
+            <tr>
+                <td> {{ rule.id }} </td> 
+                <td> {{ rule.type_of_service }} </td> 
+                <td> {{ rule.bandwidth_percent }} </td> 
+                <td> {{ rule.destination_address }} </td>
+                <td>  <a class="btn btn-default" href="{% url 'rule_update' pk=rule.pk %}">
+                        <span class="glyphicon glyphicon-pencil">
+                        </span>
+                      </a>
+                </td>
+            </tr>
+        {% endfor %} 
+        </tbody>
+    <table>
 {% endblock %}
