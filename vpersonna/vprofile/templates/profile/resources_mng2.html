@@ -20,10 +20,15 @@
                 <td> {{ rule.type_of_service }} </td> 
                 <td> {{ rule.bandwidth_percent }} </td> 
                 <td> {{ rule.destination_address }} </td>
-                <td>  <a class="btn btn-default" href="{% url 'rule_update' pk=rule.pk %}">
+                <td>  
+                    <a class="btn btn-default" href="{% url 'rule_update' pk=rule.pk %}">
                         <span class="glyphicon glyphicon-pencil">
                         </span>
-                      </a>
+                    </a>
+                    <a class="btn btn-default" href="{% url 'rule_delete' pk=rule.pk %}">
+                        <span class="glyphicon glyphicon-remove-sign">
+                        </span>
+                    </a>
                 </td>
             </tr>
         {% endfor %} 

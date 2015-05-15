@@ -138,10 +138,10 @@ def rule_update(request, pk):
         form = RuleForm(instance=rule)
     return render(request, 'profile/rule_edit.html', {'form':form})
 
-#def rule_delete(request, _id):
-#    rule = Rule.objects.get(pk = _id)
-#    rule.delete()
-#    return HttpResponse('delete')
+def rule_delete(request, pk):
+    rule = get_object_or_404(Rule, pk=pk)
+    rule.delete()
+    return redirect('/manage2')
 
 def offers(request):
 	return render(request, 'profile/offers.html', {})
