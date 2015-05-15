@@ -39,6 +39,7 @@ def dashboard(request):
 def stats(request):
          
 	return render(request, 'profile/advanced_statistics.html', {})
+
 def stats_date(request):
     template = loader.get_template('profile/stats_by_date.html')
     date = request.POST['datepicker'] 
@@ -103,6 +104,7 @@ def stats_date(request):
 
     return HttpResponse(template.render(context))
 	#return render(request, 'profile/stats_by_date.html', {})
+
 def manage(request):
     rules_list = Rule.objects.all() 
     template = loader.get_template('profile/resources_mng.html')
@@ -111,26 +113,43 @@ def manage(request):
         })
     return HttpResponse(template.render(context))
 
+def compute_total_bandwidth():
+    rules_list = Rule.objects.all() 
+    bandwidth_total = 0
+    
+    for rule in rules_list: 
+        bandwidth_total = bandwidth_total + rule.bandwidth_percent
+    return bandwidth_total
+
 def rule_edit(request):
+
+    bandwidth_total = compute_total_bandwidth() 
+
     if request.method == "POST":
         form = RuleForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
-            post.save()
+            if post.bandwidth_percent + bandwidth_total <= 100:
+                post.save()
             return redirect('/manage')
     else:
         form = RuleForm()
     return render(request, 'profile/rule_edit.html', {'form':form})
 
 def rule_update(request, pk):
+
+    bandwidth_total = compute_total_bandwidth() 
     rule = get_object_or_404(Rule, pk=pk)
+    crt_bandwidth = rule.bandwidth_percent
+
     if request.method == "POST":
         form = RuleForm(request.POST, instance=rule)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
-            post.save()
+            if post.bandwidth_percent + bandwidth_total - crt_bandwidth <= 100:
+                post.save()
             return redirect('/manage')
     else:
         form = RuleForm(instance=rule)

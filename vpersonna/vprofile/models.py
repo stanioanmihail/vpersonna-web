@@ -28,5 +28,5 @@ class Rule(models.Model):
     #rule_id = models.IntegerField('Rule id', blank=False, primary_key=True)
     rule_id = models.AutoField(primary_key=True)
     type_of_service = models.ForeignKey(ServiceType) 
-    bandwidth_percent = models.IntegerField('Bandwidth Percent', blank=False)
+    bandwidth_percent = models.PositiveIntegerField('Bandwidth Percent', blank=False)
     destination_address = models.CharField('Destination URL', blank=True, max_length='200')

@@ -5,7 +5,6 @@
 class="active"
 {% endblock %}
 {% block content %}
-    <a href="{% url 'vprofile.views.rule_edit' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -37,4 +36,5 @@ class="active"
         {% endfor %} 
         </tbody>
     <table>
+    <a href="{% url 'vprofile.views.rule_edit' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
 {% endblock %}
