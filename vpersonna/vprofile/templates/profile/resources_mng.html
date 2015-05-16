@@ -21,7 +21,7 @@ class="active"
         <tbody>
         {% for rule in rules_list %}
             <tr>
-                <td> {{ rule.id }} </td> 
+                <td> {{ forloop.counter }} </td> 
                 <td> {{ rule.type_of_service }} </td> 
                 <td> {{ rule.bandwidth_percent }} </td> 
                 <td> {{ rule.destination_address }} </td>
@@ -40,11 +40,17 @@ class="active"
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="2"> <b> Total bandwidth left</b> </td>
-                <td> <b>  {{ total_bw_used }} / 100 </b> </td>
-                <td colspan="2"></td>
+                <td></td>
+                <td><b> Total bandwidth left</b></td>
+                <td><b>  {{ total_bw_used }} / 100</b></td>
+                <td></td> 
+                <td>
+                    <a href="{% url 'vprofile.views.rule_edit' %}" >Add new rule  
+                            <span class="glyphicon glyphicon-plus">
+                            </span>
+                    </a>
+                </td>
             </tr>
         </tfoot>
-    <table>
-    <a href="{% url 'vprofile.views.rule_edit' %}" class="top-menu">Add new rule  <span class="glyphicon glyphicon-plus"></span></a>
+    </table>
 {% endblock %}
