@@ -6,7 +6,7 @@ from collections import OrderedDict
 from .forms import RuleForm
 import datetime
 from django.shortcuts import redirect, get_object_or_404
-from vprofile.models import Rule
+from vprofile.models import Rule, Offer
 
 
 # Create your views here.
@@ -163,7 +163,13 @@ def rule_delete(request, pk):
     return redirect('/manage')
 
 def offers(request):
-	return render(request, 'profile/offers.html', {})
+    offers_list = Offer.objects.all() 
+    template = loader.get_template('profile/offers.html')
+    context = RequestContext(request, {
+        'offers_list': offers_list,
+        })
+    return HttpResponse(template.render(context))
+
 def transactions(request):
 	return render(request, 'profile/transaction_hist.html', {})
 

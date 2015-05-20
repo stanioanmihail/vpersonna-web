@@ -30,3 +30,12 @@ class Rule(models.Model):
     type_of_service = models.ForeignKey(ServiceType) 
     bandwidth_percent = models.PositiveIntegerField('Bandwidth Percent', blank=False)
     destination_address = models.CharField('Destination URL', blank=True, max_length='200')
+
+class Offer(models.Model):
+    offer_id = models.AutoField(primary_key=True)
+    offer_name = models.CharField('Offer Name', blank=False, max_length=25)
+    offer_description = models.CharField('Offer description', blank=True, max_length=25)
+    offer_short_description = models.CharField('Offer short description', blank=True, max_length=200)
+    cost_per_min = models.PositiveIntegerField('Cost per minute', blank=False)
+    def __str__(self):
+        return self.offer_name
