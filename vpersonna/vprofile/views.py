@@ -42,7 +42,8 @@ def stats(request):
 
 def stats_date(request):
     template = loader.get_template('profile/stats_by_date.html')
-    date = request.POST['datepicker'] 
+    start_date = request.POST['datepicker-start']
+    end_date = request.POST['datepicker-end'] 
     tag_list = [ 'VoIP', 'HTTP (non-video)', 'BitTorent', 'Video' ]
     traffic_per_timeslot = {
             '08-10': {
@@ -97,7 +98,7 @@ def stats_date(request):
      #          },
      #      }
     context = RequestContext(request, {
-        'date': date,
+        'date': "Start Date: " + start_date + "|" + "End Date:" + end_date,
         'traffic_per_timeslot': OrderedDict(sorted(traffic_per_timeslot.items(), key=lambda t: t[0])),
         'tag_list': tag_list,
     })

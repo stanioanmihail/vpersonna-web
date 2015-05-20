@@ -2,7 +2,7 @@
 {% block header %}
 <script type="text/javascript" language="javascript">
     $(function() {
-            $("#datepicker").datepicker({ 
+            $("#datepicker-start, #datepicker-end").datepicker({ 
                         minDate: "-90D", 
                         maxDate: 'today',
                         showOn: "button",
@@ -18,15 +18,21 @@ class="active"
 {% endblock %}
 {% block content %}
 <div class="input-group" id="date-panel">
-    <form method="post" action="date">
-        <div id="datepicker-textbox-div">
-            <p><center> Choose a date: </center></p>
-            <input type="text" id="datepicker" name="datepicker">
-            {% csrf_token %}
-        </div>
-        <div id="date-submit-button-div">
-            <button class="btn btn-primary" type="submit" name="submit-date" id="date-submit-button">Submit</button>
-        </div>
-    </form>
+    <p><center><h3> Choose an interval: </h3></center></p>
+        <form method="post" action="date">
+            <div id="datepicker-div">
+                <label> Start Date: </label>
+                <input type="text" id="datepicker-start" name="datepicker-start" />
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                <label> End Date: </label>
+                <input type="text" id="datepicker-end" name="datepicker-end" />
+                {% csrf_token %}
+            </div>
+            <div id="date-submit-button-div">
+                <button class="btn btn-primary" type="submit" name="submit-date" id="date-submit-button">Submit</button>
+            </div>
+        </form>
 </div>
 {% endblock %}
