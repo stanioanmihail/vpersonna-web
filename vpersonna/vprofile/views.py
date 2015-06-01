@@ -6,11 +6,21 @@ from collections import OrderedDict
 from .forms import RuleForm
 import datetime
 from django.shortcuts import redirect, get_object_or_404
-from vprofile.models import Rule, Offer
+from vprofile.models import Rule, Offer, Client
 
 
 # Create your views here.
-def dashboard(request):
+def home(request):
+    client_list = Client.objects.all()
+    template = loader.get_template('profile/index.html')
+    context = {
+        'client_list' : client_list,
+    }
+    return HttpResponse(template.render(context))
+    #return redirect('/dashboard')
+    
+def dashboard(request, client_id):
+    client = Client.objects.get(id = client_id)
     template = loader.get_template('profile/dashboard.html')
     dashboard_dict = {
         'HTTP (non-video)' : 200,
@@ -31,16 +41,21 @@ def dashboard(request):
     context = RequestContext(request, {
         'dashboard_dict':dashboard_dict,
         'top_rate_sites_matrix':top_rate_sites_matrix,
+        'client_id': client_id,
     })
     return HttpResponse(template.render(context))
     #	return render(request, 'profile/dashboard.html', {})
 
+def stats(request, client_id):
+    template = loader.get_template('profile/advanced_statistics.html')
+    client = Client.objects.get(id = client_id)
+    context = RequestContext(request, {
+        'client_id': client_id,
+    })
+    return HttpResponse(template.render(context))
 
-def stats(request):
-         
-	return render(request, 'profile/advanced_statistics.html', {})
-
-def stats_date(request):
+def stats_date(request, client_id):
+    client = Client.objects.get(id = client_id)
     template = loader.get_template('profile/stats_by_date.html')
     start_date = request.POST['datepicker-start']
     end_date = request.POST['datepicker-end'] 
@@ -101,48 +116,52 @@ def stats_date(request):
         'date': "Start Date: " + start_date + "|" + "End Date:" + end_date,
         'traffic_per_timeslot': OrderedDict(sorted(traffic_per_timeslot.items(), key=lambda t: t[0])),
         'tag_list': tag_list,
+        'client_id': client_id,
     })
 
     return HttpResponse(template.render(context))
 	#return render(request, 'profile/stats_by_date.html', {})
 
-def compute_total_bandwidth():
-    rules_list = Rule.objects.all() 
+def compute_total_bandwidth(client_id):
+    client = Client.objects.get(id = client_id)
+    rules_list = Rule.objects.filter(client = client_id) 
     bandwidth_total = 0
     
     for rule in rules_list: 
         bandwidth_total = bandwidth_total + rule.bandwidth_percent
     return bandwidth_total
 
-def manage(request):
-    rules_list = Rule.objects.all() 
+def manage(request, client_id):
+    client = Client.objects.get(id = client_id)
+    rules_list = Rule.objects.filter(client = client_id) 
     template = loader.get_template('profile/resources_mng.html')
     context = RequestContext(request, {
         'rules_list': rules_list,
-        'total_bw_used' : 100 - compute_total_bandwidth(),
+        'total_bw_used' : 100 - compute_total_bandwidth(client_id),
+        'client_id': client_id,
         })
     return HttpResponse(template.render(context))
 
-def rule_edit(request):
-
-    bandwidth_total = compute_total_bandwidth() 
+def rule_edit(request, client_id):
+    bandwidth_total = compute_total_bandwidth(client_id) 
 
     if request.method == "POST":
         form = RuleForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
+            post.client = client_id
             if post.bandwidth_percent + bandwidth_total <= 100:
                 post.save()
-            return redirect('/manage')
+            return redirect('manage', client_id=client_id)
     else:
         form = RuleForm()
-    return render(request, 'profile/rule_edit.html', {'form':form})
+    return render(request, 'profile/rule_edit.html', {'client_id':client_id,'form':form})
 
-def rule_update(request, pk):
+def rule_update(request, pk, client_id):
 
-    bandwidth_total = compute_total_bandwidth() 
-    rule = get_object_or_404(Rule, pk=pk)
+    bandwidth_total = compute_total_bandwidth(client_id) 
+    rule = get_object_or_404(Rule, pk=pk, client=client_id)
     crt_bandwidth = rule.bandwidth_percent
 
     if request.method == "POST":
@@ -152,24 +171,32 @@ def rule_update(request, pk):
             post.author = request.user
             if post.bandwidth_percent + bandwidth_total - crt_bandwidth <= 100:
                 post.save()
-            return redirect('/manage')
+            return redirect('manage', client_id=client_id)
     else:
         form = RuleForm(instance=rule)
-    return render(request, 'profile/rule_edit.html', {'form':form})
+    return render(request, 'profile/rule_edit.html', {'client_id':client_id,'form':form})
 
-def rule_delete(request, pk):
-    rule = get_object_or_404(Rule, pk=pk)
+def rule_delete(request, pk, client_id):
+    client = Client.objects.get(id = client_id)
+    rule = get_object_or_404(Rule, pk=pk, client=client_id)
     rule.delete()
-    return redirect('/manage')
+    return redirect('manage', client_id=client_id)
 
-def offers(request):
+def offers(request, client_id):
+    client = Client.objects.get(id = client_id)
     offers_list = Offer.objects.all() 
     template = loader.get_template('profile/offers.html')
     context = RequestContext(request, {
         'offers_list': offers_list,
+        'client_id': client_id,
         })
     return HttpResponse(template.render(context))
 
-def transactions(request):
-	return render(request, 'profile/transaction_hist.html', {})
+def transactions(request, client_id):
+    client = Client.objects.get(id = client_id)
+    template = loader.get_template('profile/transaction_hist.html')
+    context = RequestContext(request, {
+        'client_id': client_id,
+    })
+    return HttpResponse(template.render(context))
 
