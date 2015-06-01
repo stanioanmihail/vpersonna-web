@@ -1,10 +1,36 @@
+<head>
+    <link href="/static/bootstrap-3.3.4-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/static/jquery/css/jquery-ui.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+    <script language="javascript" type="text/javascript" src="/static/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/bootstrap-3.3.4-dist/js/bootstrap.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/jquery/js/jquery-1.11.3.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/jquery/js/jquery-ui.js"></script>
+    {% block header %}
+    {% endblock header %}
+    <link href="/static/overriddings/bootstrap-extra.css" rel="stylesheet">
+    <link href="/static/overriddings/profile.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-inverse" id="banner">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <div class="navbar-brand" id="brand">
+                    vPersonna
+                </div>
+            </div>
+        </div>
+    </nav>
+<div id="padding">
+
 <table class="table table-bordered table-hover">
         <thead>
             <tr>
                 <td>#</td>
                 <td><center><b>Client</b></center></td>
                 <td><center><b>Email</b></center></td>
-                <td><center><b>Access Profile</b></center></td>
+                <td><center><b>Action</b></center></td>
             </tr>
         </thead>
         <tbody>
@@ -13,8 +39,20 @@
                 <td> {{ client.id }} </td> 
                 <td> {{ client.name }} </td> 
                 <td> {{ client.email }} </td> 
-                <td><a href="{{ client.id }}/dashboard">User Page</a></td>
+                <td><center><input class="btn btn-info" type="button" onclick='location.href="{% url 'dashboard' client_id=client.id%}"'
+                        value="Login as {{ client.name }}"/></center>
+                </td>
             </tr>
         {% endfor %} 
         </tbody>
 </table>
+
+</div>
+    <div id="footer"> 
+        <h5>
+            </br>
+            <center> Powered by vPersonna </center>
+            <center> <a href="https://github.com/stanioanmihail/vpersonna-web">vPersonna Official Web Support Site </a></center>
+        </h5>
+    </div>
+</body>
