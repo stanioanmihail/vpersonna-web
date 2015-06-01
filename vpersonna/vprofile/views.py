@@ -42,6 +42,7 @@ def dashboard(request, client_id):
         'dashboard_dict':dashboard_dict,
         'top_rate_sites_matrix':top_rate_sites_matrix,
         'client_id': client_id,
+        'client': client,
     })
     return HttpResponse(template.render(context))
     #	return render(request, 'profile/dashboard.html', {})
