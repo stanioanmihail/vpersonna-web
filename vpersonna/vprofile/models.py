@@ -30,8 +30,8 @@ class Rule(models.Model):
     #rule_id = models.IntegerField('Rule id', blank=False, primary_key=True)
     rule_id = models.AutoField(primary_key=True)
     type_of_service = models.ForeignKey(ServiceType) 
-    #client = models.ForeignKey(Client)
-    client = models.IntegerField(blank=False)
+    client = models.ForeignKey(Client)
+    #client = models.IntegerField(blank=False)
     bandwidth_percent = models.PositiveIntegerField('Bandwidth Percent', blank=False)
     destination_address = models.CharField('Destination URL', blank=True, max_length='200')
 
@@ -43,3 +43,23 @@ class Offer(models.Model):
     cost_per_min = models.PositiveIntegerField('Cost per minute', blank=False)
     def __str__(self):
         return self.offer_name
+
+#New tables:
+class SiteAccess(models.Model):
+    id = models.AutoField(primary_key=True)
+    url = models.CharField('Site URL', blank=True, max_length=25)
+    ip_regex = RegexValidator(regex='^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', message='IP format A.B.C.D')
+    ip_addr = models.CharField('IP address ', validators=[ip_regex], blank=False, max_length=20)
+    num_accesses = models.PositiveIntegerField('Number of accesses', blank=False)
+
+class ServiceUtilizationStatistics(models.Model):
+    id = models.AutoField(primary_key=True)
+    client = models.ForeignKey(Client)
+    service = models.ForeignKey(ServiceType)
+    date = models.DateTimeField(auto_now=False, auto_now_add=False, blank=False)
+    num_accesses = models.PositiveIntegerField('Number of accesses', blank=False)
+
+class Activity(models.Model):
+    id = models.AutoField(primary_key=True)
+    client = models.ForeignKey(Client)
+    description = models.CharField('Action Description', blank=False, max_length=100)

@@ -143,7 +143,9 @@ def manage(request, client_id):
         })
     return HttpResponse(template.render(context))
 
+#send client, not client id
 def rule_edit(request, client_id):
+    client = Client.objects.get(id = client_id)
     bandwidth_total = compute_total_bandwidth(client_id) 
 
     if request.method == "POST":
@@ -151,7 +153,7 @@ def rule_edit(request, client_id):
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
-            post.client = client_id
+            post.client = client
             if post.bandwidth_percent + bandwidth_total <= 100:
                 post.save()
             return redirect('manage', client_id=client_id)
