@@ -5,3 +5,8 @@ from .models import *
 admin.site.register(Client)
 admin.site.register(ServiceType)
 admin.site.register(Rule)
+admin.site.register(Offer)
+admin.site.register(SiteAccess)
+admin.site.register(ServiceUtilizationStatistics)
+admin.site.register(Activity)
+

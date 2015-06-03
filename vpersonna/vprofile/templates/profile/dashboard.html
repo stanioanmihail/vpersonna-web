@@ -14,21 +14,21 @@
 
             var data_donut_old = google.visualization.arrayToDataTable([
                 ['Trafic Type', 'Number of hours'],
-                {% for traffic_type, value in dashboard_dict.items %}
+                {% for traffic_type, value in dashboard_dict_m1.items %}
                 ['{{ traffic_type }}', {{ value }}],
                 {% endfor %}
             ]);
 
             var data_donut_older = google.visualization.arrayToDataTable([
                 ['Trafic Type', 'Number of hours'],
-                {% for traffic_type, value in dashboard_dict.items %}
+                {% for traffic_type, value in dashboard_dict_m2.items %}
                 ['{{ traffic_type }}', {{ value }}],
                 {% endfor %}
             ]);
 
             var data_donut_oldest = google.visualization.arrayToDataTable([
                 ['Trafic Type', 'Number of hours'],
-                {% for traffic_type, value in dashboard_dict.items %}
+                {% for traffic_type, value in dashboard_dict_m3.items %}
                 ['{{ traffic_type }}', {{ value }}],
                 {% endfor %}
             ]);
@@ -40,8 +40,8 @@
                 {% endfor %}
             ]);    
 
-            var today = new Date();
-            var last_date = new Date();
+            var today = new Date({{ year }},{{ month }},{{ day }},{{ hours }},{{ minutes }},0,0);
+            var last_date = new Date({{ year }},{{ month }},{{ day }},{{ hours }},{{ minutes }},0,0);
             var month = new Array();
             month[0] = "January";
             month[1] = "February";
@@ -174,5 +174,4 @@
             <div id="top_x_div" style="width: 80%; height: 100%;"></div>
         </div>
     </div>
-           
 {% endblock %}

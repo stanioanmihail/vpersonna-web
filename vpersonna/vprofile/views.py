@@ -6,7 +6,8 @@ from collections import OrderedDict
 from .forms import RuleForm
 import datetime
 from django.shortcuts import redirect, get_object_or_404
-from vprofile.models import Rule, Offer, Client
+from vprofile.models import *
+from django.db.models import Sum
 
 
 # Create your views here.
@@ -22,14 +23,45 @@ def home(request):
 def dashboard(request, client_id):
     client = Client.objects.get(id = client_id)
     template = loader.get_template('profile/dashboard.html')
-    dashboard_dict = {
-        'HTTP (non-video)' : 200,
-        'VoIP' : 5,
-        'BitTorrent' : 400,
-        'Video' : 105,
-        'FTP' : 3,
+
+    date_string = '03-06-2015 22:30'
+    date_format = '%d-%m-%Y %H:%M'
+    today = datetime.datetime.strptime(date_string, date_format)
+
+    services_list = ServiceType.objects.all()
+
+    dashboard_dict={}
+    dashboard_dict_m1={}
+    dashboard_dict_m2={}
+    dashboard_dict_m3={}
     
-    }
+    #filter by client_id, month and year. Sum of all num_accesses fields corresponding to 
+    #a specific service
+    for s in services_list:
+        crt_service_access =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
+                                                    date__month=today.month, 
+                                                    date__year=today.year,
+                                                    service=s).aggregate(Sum('num_accesses'))
+        dashboard_dict[s.service_name] = crt_service_access.values()[0]
+    
+        crt_service_access_m1 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
+                                                    date__month=(today.month - 1), #possible error for january 
+                                                    date__year=(today.year + ((today.month - 1)/12)),#install dateutils
+                                                    service=s).aggregate(Sum('num_accesses'))
+        dashboard_dict_m1[s.service_name] = crt_service_access_m1.values()[0]
+
+        crt_service_access_m2 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
+                                                    date__month=(today.month - 2), #possible error for january 
+                                                    date__year=(today.year + ((today.month - 2)/12)),
+                                                    service=s).aggregate(Sum('num_accesses'))
+        dashboard_dict_m2[s.service_name] = crt_service_access_m2.values()[0]
+
+        crt_service_access_m3 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
+                                                    date__month=(today.month - 3), #possible error for january 
+                                                    date__year=(today.year + ((today.month - 3)/12)),
+                                                    service=s).aggregate(Sum('num_accesses'))
+        dashboard_dict_m3[s.service_name] = crt_service_access_m3.values()[0]
+
     top_rate_sites_matrix = [
         ["www.facebook.com","66.220.152.19", 480],
         ["www.google.com", "173.194.112.178", 304],
@@ -40,9 +72,19 @@ def dashboard(request, client_id):
     
     context = RequestContext(request, {
         'dashboard_dict':dashboard_dict,
+        'dashboard_dict_m1':dashboard_dict_m1,
+        'dashboard_dict_m2':dashboard_dict_m2,
+        'dashboard_dict_m3':dashboard_dict_m3,
         'top_rate_sites_matrix':top_rate_sites_matrix,
         'client_id': client_id,
         'client': client,
+        'year': today.year + ((today.month - 3) / 12),
+        'month': (today.month - 1) % 12,
+        'day': today.day,
+        'hours': today.hour,
+        'minutes': today.minute,
+        
+        
     })
     return HttpResponse(template.render(context))
     #	return render(request, 'profile/dashboard.html', {})
