@@ -23,8 +23,8 @@
             ]);
             var options = {
                 title: 'Traffic by time of day',
-                width: 600,
-                height: 400,
+                width: 800,
+                height: 600,
                 legend: { position: 'top', maxLines: 3 },
                 bar: { groupWidth: '75%' },
                 isStacked: true
@@ -48,4 +48,5 @@ class="active"
 {% block content %}
         <p>{{ date }}</p> 
         <div id="barchart-schedule" style="width: 900px; height: 500px;"></div>
+        {{ traffic_per_timeslot }}
 {% endblock %}

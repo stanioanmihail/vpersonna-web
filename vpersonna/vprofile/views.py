@@ -24,6 +24,7 @@ def dashboard(request, client_id):
     client = Client.objects.get(id = client_id)
     template = loader.get_template('profile/dashboard.html')
 
+    #today - need change
     date_string = '03-06-2015 22:30'
     date_format = '%d-%m-%Y %H:%M'
     today = datetime.datetime.strptime(date_string, date_format)
@@ -90,76 +91,90 @@ def dashboard(request, client_id):
     #	return render(request, 'profile/dashboard.html', {})
 
 def stats(request, client_id):
+    #today - need change
+    today = '03-06-2015'
+
+
     template = loader.get_template('profile/advanced_statistics.html')
     client = Client.objects.get(id = client_id)
     context = RequestContext(request, {
         'client_id': client_id,
+        'today': today,
     })
     return HttpResponse(template.render(context))
 
 def stats_date(request, client_id):
+
+    #today - need change
+    date_format = '%d-%m-%Y'
+    
     client = Client.objects.get(id = client_id)
     template = loader.get_template('profile/stats_by_date.html')
-    start_date = request.POST['datepicker-start']
-    end_date = request.POST['datepicker-end'] 
-    tag_list = [ 'VoIP', 'HTTP (non-video)', 'BitTorent', 'Video' ]
-    traffic_per_timeslot = {
-            '08-10': {
-                'VoIP': 10, 'HTTP (non-video)': 20, 'BitTorrent': 30, 'Video': 15
-                },
-            '10-12': {
-                'VoIP': 10, 'HTTP (non-video)': 20, 'BitTorrent': 30, 'Video': 15
-                },
-            '12-14': {
-                'VoIP': 5, 'HTTP (non-video)': 2, 'BitTorrent': 20, 'Video': 5
-                },
-            '14-16': {
-                'VoIP': 1, 'HTTP (non-video)': 0, 'BitTorrent': 0, 'Video': 1
-                },
-            '16-18': {
-                'VoIP': 3, 'HTTP (non-video)': 4, 'BitTorrent': 4, 'Video': 3
-                },
-            '18-20': {
-                'VoIP': 5, 'HTTP (non-video)': 2, 'BitTorrent': 17, 'Video': 20
-                },
-            '20-22': {
-                'VoIP': 5, 'HTTP (non-video)': 10, 'BitTorrent': 30, 'Video': 30
-                },
-            '22-24': {
-                'VoIP': 10, 'HTTP (non-video)': 5, 'BitTorrent': 10, 'Video': 15
-                },
-            }
-     #traffic_per_timeslot = {
-     #       '08-10': {
-     #           'VoIP': "0.10%", 'HTTP (non-video)': "0.20%", 'BitTorrent': "0.30%", 'Video': "0.15%"
-     #           },
-     #       '10-12': {
-     #           'VoIP': "0.10%", 'HTTP (non-video)': "0.20%", 'BitTorrent': "0.30%", 'Video': "0.15%"
-     #           },
-     #       '12-14': {
-     #           'VoIP': "0.05%", 'HTTP (non-video)': "0.02%", 'BitTorrent': "0.20%", 'Video': "0.05%"
-     #           },
-     #       '14-16': {
-     #           'VoIP': "0.05%", 'HTTP (non-video)': "0.00%", 'BitTorrent': "0.00%", 'Video': "0.01%"
-     #           },
-     #       '16-18': {
-     #           'VoIP': "0.03%", 'HTTP (non-video)': "0.04%", 'BitTorrent': "0.04%", 'Video': "0.03%"
-     #           },
-     #      '18-20': {
-     #          'VoIP': "0.05%", 'HTTP (non-video)': "0.02%", 'BitTorrent': "0.17%", 'Video': "0.20%"
-     #           },
-     #       '20-22': {
-     #           'VoIP': "0.05%", 'HTTP (non-video)': "0.10%", 'BitTorrent': "0.30%", 'Video': "0.30%"
-     #           },
-     #       '22-24': {
-     #          'VoIP': "0.10%", 'HTTP (non-video)': "0.05%", 'BitTorrent': "0.10%", 'Video': "0.15%"
-     #          },
-     #      }
+    start_date = datetime.datetime.strptime(request.POST['datepicker-start'], date_format)
+    end_date = datetime.datetime.strptime(request.POST['datepicker-end'], date_format)
+    
+    #tag_list = [ 'VoIP', 'HTTP (non-video)', 'BitTorent', 'Video' ]
+    tag_list = ServiceType.objects.all();
+
+    #traffic_per_timeslot = {
+    #        '08-10': {
+    #            'VoIP': 10, 'HTTP (non-video)': 20, 'BitTorrent': 30, 'Video': 15
+    #            },
+    #        '10-12': {
+    #            'VoIP': 10, 'HTTP (non-video)': 20, 'BitTorrent': 30, 'Video': 15
+    #            },
+    #        '12-14': {
+    #            'VoIP': 5, 'HTTP (non-video)': 2, 'BitTorrent': 20, 'Video': 5
+    #            },
+    #        '14-16': {
+    #            'VoIP': 1, 'HTTP (non-video)': 0, 'BitTorrent': 0, 'Video': 1
+    #            },
+    #        '16-18': {
+    #            'VoIP': 3, 'HTTP (non-video)': 4, 'BitTorrent': 4, 'Video': 3
+    #            },
+    #        '18-20': {
+    #            'VoIP': 5, 'HTTP (non-video)': 2, 'BitTorrent': 17, 'Video': 20
+    #            },
+    #        '20-22': {
+    #            'VoIP': 5, 'HTTP (non-video)': 10, 'BitTorrent': 30, 'Video': 30
+    #            },
+    #        '22-24': {
+    #            'VoIP': 10, 'HTTP (non-video)': 5, 'BitTorrent': 10, 'Video': 15
+    #            },
+    #        }
+
+    traffic_per_timeslot = {} 
+    for i in range(0, 23, 2):
+        crt_hours_range_dict = {}
+        for s in tag_list:
+            if start_date < end_date:
+                #data range
+                crt_service_accesses = ServiceUtilizationStatistics.objects.filter(
+                                                        date__range=[start_date.strftime("%Y-%m-%d"), 
+                                                                    end_date.strftime("%Y-%m-%d")],
+                                                        client = client_id,
+                                                        service = s).filter(date__hour = 12).aggregate(Sum('num_accesses', 
+                                                                                        default=0))
+            elif start_date == end_date:
+                #stats from the same day
+                crt_service_accesses = ServiceUtilizationStatistics.objects.filter(
+                                                        date__year = start_date.year,
+                                                        date__month = start_date.month,
+                                                        date__day = start_date.day,
+                                                        client = client_id,
+                                                        service = s).aggregate(Sum('num_accesses', default=0))
+                 
+            crt_hours_range_dict[s.service_name] = crt_service_accesses.values()[0]
+
+        traffic_per_timeslot[ str(i).zfill(2) + ":00" + " - " + str(i + 2).zfill(2) + ":00"] = crt_hours_range_dict
+
     context = RequestContext(request, {
-        'date': "Start Date: " + start_date + "|" + "End Date:" + end_date,
+        'date': "Start Date: " + start_date.strftime(date_format) + "|" + "End Date:" + end_date.strftime(date_format),
         'traffic_per_timeslot': OrderedDict(sorted(traffic_per_timeslot.items(), key=lambda t: t[0])),
         'tag_list': tag_list,
         'client_id': client_id,
+        
+        
     })
 
     return HttpResponse(template.render(context))
