@@ -144,7 +144,7 @@ def stats_date(request, client_id):
     #        }
 
     traffic_per_timeslot = {} 
-    for i in range(0, 23, 2):
+    for i in range(0, 23):
         crt_hours_range_dict = {}
         for s in tag_list:
             if start_date < end_date:
@@ -153,7 +153,9 @@ def stats_date(request, client_id):
                                                         date__range=[start_date.strftime("%Y-%m-%d"), 
                                                                     end_date.strftime("%Y-%m-%d")],
                                                         client = client_id,
-                                                        service = s).filter(date__hour = 12).aggregate(Sum('num_accesses', 
+                                                        service = s,
+                                                        date__hour=i, 
+                                                            ).aggregate(Sum('num_accesses', 
                                                                                         default=0))
             elif start_date == end_date:
                 #stats from the same day
@@ -161,18 +163,23 @@ def stats_date(request, client_id):
                                                         date__year = start_date.year,
                                                         date__month = start_date.month,
                                                         date__day = start_date.day,
+                                                        date__hour = i,
                                                         client = client_id,
                                                         service = s).aggregate(Sum('num_accesses', default=0))
-                 
-            crt_hours_range_dict[s.service_name] = crt_service_accesses.values()[0]
 
-        traffic_per_timeslot[ str(i).zfill(2) + ":00" + " - " + str(i + 2).zfill(2) + ":00"] = crt_hours_range_dict
+            if crt_service_accesses.values()[0] != None: #no criteria match, no traffic stats stored 
+                crt_hours_range_dict[s.service_name] = crt_service_accesses.values()[0]
+            else:
+                crt_hours_range_dict[s.service_name] = 0
+
+        traffic_per_timeslot[str(i).zfill(2) + ":00" +"-" + str(i).zfill(2) + ":59"] = crt_hours_range_dict
 
     context = RequestContext(request, {
-        'date': "Start Date: " + start_date.strftime(date_format) + "|" + "End Date:" + end_date.strftime(date_format),
         'traffic_per_timeslot': OrderedDict(sorted(traffic_per_timeslot.items(), key=lambda t: t[0])),
         'tag_list': tag_list,
         'client_id': client_id,
+        'start_date': start_date.strftime("%Y-%b-%d"),
+        'end_date': end_date.strftime("%Y-%b-%d"),
         
         
     })
