@@ -48,8 +48,8 @@
         ./manage.py createsuperuser
 
     It will require: username, password, password confirmation
-    The admin console is available accessing from browser <IP>:<port>/admin (ex: 127.0.0.1:8000/admin)
+    The admin console is available accessing from browser IP:port/admin (ex: 127.0.0.1:8000/admin)
 
 ## Test platform details:
 
-    The static platform adopts 03-June-2015 22:30 as today's date and time.
+The static platform adopts 03-June-2015 22:30 as today's date and time.
