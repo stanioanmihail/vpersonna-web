@@ -21,21 +21,23 @@ def home(request):
     #return redirect('/dashboard')
     
 def dashboard(request, client_id):
-    client = Client.objects.get(id = client_id)
     template = loader.get_template('profile/dashboard.html')
+    
+    client = Client.objects.get(id = client_id)
+    news = News.objects.filter(active = True).order_by('-date')
+    services_list = ServiceType.objects.all()
 
     #today - need change
     date_string = '03-06-2015 22:30'
     date_format = '%d-%m-%Y %H:%M'
     today = datetime.datetime.strptime(date_string, date_format)
 
-    services_list = ServiceType.objects.all()
-
     dashboard_dict={}
     dashboard_dict_m1={}
     dashboard_dict_m2={}
     dashboard_dict_m3={}
-    
+   
+    #PIE CHARTS stats 
     #filter by client_id, month and year. Sum of all num_accesses fields corresponding to 
     #a specific service
     for s in services_list:
@@ -63,6 +65,7 @@ def dashboard(request, client_id):
                                                     service=s).aggregate(Sum('num_accesses'))
         dashboard_dict_m3[s.service_name] = crt_service_access_m3.values()[0]
 
+    #TOP GLOBAL SITES STATS
     top_rate_sites_matrix = [
         ["www.facebook.com","66.220.152.19", 480],
         ["www.google.com", "173.194.112.178", 304],
@@ -71,6 +74,7 @@ def dashboard(request, client_id):
         ["www.engadget.com", "195.93.85.193", 80],
     ]
     
+
     context = RequestContext(request, {
         'dashboard_dict':dashboard_dict,
         'dashboard_dict_m1':dashboard_dict_m1,
@@ -84,6 +88,7 @@ def dashboard(request, client_id):
         'day': today.day,
         'hours': today.hour,
         'minutes': today.minute,
+        'news': news,
         
         
     })

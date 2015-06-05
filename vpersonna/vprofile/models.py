@@ -63,3 +63,14 @@ class Activity(models.Model):
     id = models.AutoField(primary_key=True)
     client = models.ForeignKey(Client)
     description = models.CharField('Action Description', blank=False, max_length=100)
+
+class News(models.Model):
+    id = models.AutoField(primary_key=True)
+    title = models.CharField('News Title', blank=False, max_length=25)
+    content = models.CharField('News Content', blank=False, max_length=255)
+    active = models.BooleanField('Active/Hidden', blank=False);
+    date = models.DateTimeField(auto_now=False, auto_now_add=False, blank=False)
+
+    def __str__(self):
+        return self.title
+
