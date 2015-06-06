@@ -12,3 +12,6 @@ echo "### Add news ####"
 python add_news.py  
 echo "### Add traffic stats - short ####"
 python add_service_statistics_short.py
+echo "### Add top sites ###"
+python add_top_sites.py
+

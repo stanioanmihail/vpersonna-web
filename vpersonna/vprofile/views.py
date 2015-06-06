@@ -26,6 +26,7 @@ def dashboard(request, client_id):
     client = Client.objects.get(id = client_id)
     news = News.objects.filter(active = True).order_by('-date')
     services_list = ServiceType.objects.all()
+    top_5_sites = SiteAccess.objects.order_by('-num_accesses')[:5]
 
     #today - need change
     date_string = '03-06-2015 22:30'
@@ -66,14 +67,10 @@ def dashboard(request, client_id):
         dashboard_dict_m3[s.service_name] = crt_service_access_m3.values()[0]
 
     #TOP GLOBAL SITES STATS
-    top_rate_sites_matrix = [
-        ["www.facebook.com","66.220.152.19", 480],
-        ["www.google.com", "173.194.112.178", 304],
-        ["www.9gag.com", "54.215.82.230", 211],
-        ["www.youtube.com", "217.73.160.236", 120],
-        ["www.engadget.com", "195.93.85.193", 80],
-    ]
-    
+    top_rate_sites_matrix = []
+    for sa in top_5_sites:
+        top_rate_sites_matrix.append([sa.url, sa.num_accesses])
+
 
     context = RequestContext(request, {
         'dashboard_dict':dashboard_dict,

@@ -48,8 +48,8 @@ class Offer(models.Model):
 class SiteAccess(models.Model):
     id = models.AutoField(primary_key=True)
     url = models.CharField('Site URL', blank=True, max_length=25)
-    ip_regex = RegexValidator(regex='^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', message='IP format A.B.C.D')
-    ip_addr = models.CharField('IP address ', validators=[ip_regex], blank=False, max_length=20)
+#    ip_regex = RegexValidator(regex='^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', message='IP format A.B.C.D')
+#    ip_addr = models.CharField('IP address ', validators=[ip_regex], blank=False, max_length=20)
     num_accesses = models.PositiveIntegerField('Number of accesses', blank=False)
 
 class ServiceUtilizationStatistics(models.Model):

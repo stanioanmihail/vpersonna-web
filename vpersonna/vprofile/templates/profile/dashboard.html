@@ -6,28 +6,28 @@
         google.setOnLoadCallback(drawChart);
         function drawChart() {
             var data_piechart = google.visualization.arrayToDataTable([
-                ['Trafic Type', 'Number of hours'],
+                ['Trafic Type', 'Number of sessions'],
                 {% for traffic_type, value in dashboard_dict.items %}
                 ['{{ traffic_type }}', {{ value }}],
                 {% endfor %}
             ]);
 
             var data_donut_old = google.visualization.arrayToDataTable([
-                ['Trafic Type', 'Number of hours'],
+                ['Trafic Type', 'Number of sessions'],
                 {% for traffic_type, value in dashboard_dict_m1.items %}
                 ['{{ traffic_type }}', {{ value }}],
                 {% endfor %}
             ]);
 
             var data_donut_older = google.visualization.arrayToDataTable([
-                ['Trafic Type', 'Number of hours'],
+                ['Trafic Type', 'Number of sessions'],
                 {% for traffic_type, value in dashboard_dict_m2.items %}
                 ['{{ traffic_type }}', {{ value }}],
                 {% endfor %}
             ]);
 
             var data_donut_oldest = google.visualization.arrayToDataTable([
-                ['Trafic Type', 'Number of hours'],
+                ['Trafic Type', 'Number of sessions'],
                 {% for traffic_type, value in dashboard_dict_m3.items %}
                 ['{{ traffic_type }}', {{ value }}],
                 {% endfor %}
@@ -35,7 +35,7 @@
 
             var data_linechart_topsites = google.visualization.arrayToDataTable([
                 ['Site', 'Rank'],
-                {% for domain,ip,access in top_rate_sites_matrix %}
+                {% for domain, access in top_rate_sites_matrix %}
                 ['{{ domain }}', {{ access }}],
                 {% endfor %}
             ]);    
@@ -158,14 +158,12 @@
         <div class="panel" id="top-sites-table-panel">
             <table class="table table-striped" id="top-sites">
                 <tr>
-                    <th></th>
                     <th>Top 5 Accessed Sites</th>
-                    <th></th>
+                    <th>Nb. accesses</th>
                 </tr>
-                {% for domain,ip,access in top_rate_sites_matrix %}
+                {% for domain, access in top_rate_sites_matrix %}
                 <tr>
                     <td>{{ domain }} </td>
-                    <td>{{ ip }} </td>
                     <td>{{ access }} </td>
                 </tr>
                 {% endfor %}
