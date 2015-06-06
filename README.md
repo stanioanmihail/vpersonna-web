@@ -14,6 +14,7 @@
         sudo pip install virtualenv
         sudo pip install virtualenvwrapper
         sudo pip install django
+        sudo pip install dateutils
 
 3. virtual environment setup
 

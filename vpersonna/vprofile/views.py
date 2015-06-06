@@ -8,6 +8,7 @@ import datetime
 from django.shortcuts import redirect, get_object_or_404
 from vprofile.models import *
 from django.db.models import Sum
+from dateutil.relativedelta import relativedelta
 
 
 # Create your views here.
@@ -43,26 +44,30 @@ def dashboard(request, client_id):
     #a specific service
     for s in services_list:
         crt_service_access =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
-                                                    date__month=today.month, 
+                                                    date__month=today.month, #stats from current month (not day) 
                                                     date__year=today.year,
                                                     service=s).aggregate(Sum('num_accesses'))
         dashboard_dict[s.service_name] = crt_service_access.values()[0]
     
+        
+        date_old = today + relativedelta(months=-1)
         crt_service_access_m1 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
-                                                    date__month=(today.month - 1), #possible error for january 
-                                                    date__year=(today.year + ((today.month - 1)/12)),#install dateutils
+                                                    date__month=date_old.month,  
+                                                    date__year=date_old.year ,  
                                                     service=s).aggregate(Sum('num_accesses'))
         dashboard_dict_m1[s.service_name] = crt_service_access_m1.values()[0]
 
+        date_older = today + relativedelta(months=-2)
         crt_service_access_m2 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
-                                                    date__month=(today.month - 2), #possible error for january 
-                                                    date__year=(today.year + ((today.month - 2)/12)),
+                                                    date__month=date_older.month,  
+                                                    date__year=date_older.year ,  
                                                     service=s).aggregate(Sum('num_accesses'))
         dashboard_dict_m2[s.service_name] = crt_service_access_m2.values()[0]
 
+        date_oldest = today + relativedelta(months=-3)
         crt_service_access_m3 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
-                                                    date__month=(today.month - 3), #possible error for january 
-                                                    date__year=(today.year + ((today.month - 3)/12)),
+                                                    date__month=date_older.month,  
+                                                    date__year=date_older.year ,  
                                                     service=s).aggregate(Sum('num_accesses'))
         dashboard_dict_m3[s.service_name] = crt_service_access_m3.values()[0]
 
@@ -80,8 +85,8 @@ def dashboard(request, client_id):
         'top_rate_sites_matrix':top_rate_sites_matrix,
         'client_id': client_id,
         'client': client,
-        'year': today.year + ((today.month - 3) / 12),
-        'month': (today.month - 1) % 12,
+        'year': today.year,
+        'month': (today.month - 1) % 12, #google charts: months starts from 00 - January
         'day': today.day,
         'hours': today.hour,
         'minutes': today.minute,

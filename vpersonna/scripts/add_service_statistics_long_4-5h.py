@@ -55,11 +55,11 @@ def main():
 
     remove_all_data()
 
-    #today = datetime.datetime.today()
-
+    today = datetime.datetime.strptime("2015-06-03 22:30", date_format)
+    end_date = today
+    start_ref_date = end_date + relativedelta(months=-3)
+    start_date = start_ref_date.replace(hour = 8, minute = today.minute)
     
-    #start_date = datetime.datetime(today.year + ((today.month - 3) / 12), (today.month - 3) % 12, today.day, 0, today.minute)
-    #end_date = datetime.datetime.today()
  
     # 4-5h - ------------       
     print "Clean tables: done!"
@@ -72,7 +72,7 @@ def main():
                 #print c,",",s,",",single_date.strftime("%Y-%m-%d %H:%M"),",",num_accesses
                 
     #------------------
-    read_all_data()
+    #read_all_data()
 
 if __name__ == "__main__":
     sys.exit(main())

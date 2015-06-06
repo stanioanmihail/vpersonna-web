@@ -16,6 +16,7 @@ django.setup()
 from vprofile.models import ServiceType, ServiceUtilizationStatistics, Client
 from random import randint
 import datetime
+from dateutil.relativedelta import relativedelta
 
 # Setup Django environment.
 UTF8Writer = codecs.getwriter('utf8')
@@ -55,10 +56,11 @@ def main():
 
     remove_all_data()
 
+    #today's date is hardcoded 
     today = datetime.datetime.strptime("2015-06-03 22:30", date_format)
-    
-    start_date = datetime.datetime(today.year + ((today.month - 3) / 12), (today.month - 3) % 12, today.day, 8, today.minute)
-    end_date = datetime.datetime.today()
+    end_date = today
+    start_ref_date = end_date + relativedelta(months=-3)
+    start_date = start_ref_date.replace(hour = 8, minute = today.minute)
         
     print "Clean tables: done!"
     for c in clients:
