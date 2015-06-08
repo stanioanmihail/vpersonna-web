@@ -44,7 +44,6 @@ class Offer(models.Model):
     def __str__(self):
         return self.offer_name
 
-#New tables:
 class SiteAccess(models.Model):
     id = models.AutoField(primary_key=True)
     url = models.CharField('Site URL', blank=True, max_length=25)
@@ -73,4 +72,21 @@ class News(models.Model):
 
     def __str__(self):
         return self.title
+
+#Aggregation tables:
+class IPAllocation(models.Model):
+    id = models.AutoField(primary_key=True)
+    ip_regex = RegexValidator(regex='^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', message='IP format A.B.C.D')
+    ip_addr = models.CharField('IP address ', validators=[ip_regex], blank=False, max_length=20)
+    client = models.ForeignKey(Client)
+
+class BrutePacket(models.Model):
+    id = models.AutoField(primary_key=True)
+    ip_regex = RegexValidator(regex='^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', message='IP format A.B.C.D')
+    ip_src = models.CharField('Source IP address ', validators=[ip_regex], blank=False, max_length=20)
+    ip_dst = models.CharField('Destination IP address ', validators=[ip_regex], blank=False, max_length=20)
+    port_src = models.PositiveIntegerField('Source Port Value', blank=False)
+    port_dst = models.PositiveIntegerField('Destination Port Value', blank=False)
+    timestamp = models.DateTimeField(auto_now=False, auto_now_add=True, blank=False)
+    
 
