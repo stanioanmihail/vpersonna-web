@@ -141,7 +141,7 @@ def stats_date(request, client_id):
     next_day = end_date + datetime.timedelta(days = 1) # range is not inclusive so it necessary the date of the next day
     traffic_per_timeslot = {} 
 
-    for i in range(0, 23):
+    for i in range(0, 24):
         crt_hours_range_dict = {}
         for s in tag_list:
             if start_date < end_date:
