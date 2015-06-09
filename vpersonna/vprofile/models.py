@@ -87,6 +87,15 @@ class BrutePacket(models.Model):
     ip_dst = models.CharField('Destination IP address ', validators=[ip_regex], blank=False, max_length=20)
     port_src = models.PositiveIntegerField('Source Port Value', blank=False)
     port_dst = models.PositiveIntegerField('Destination Port Value', blank=False)
+    transport_protocol = models.BooleanField('Transport Layer Protocol: 0-UDP, 1-TCP', blank=False)
+    host_address = models.CharField('HTTP Host', blank=True, max_length=50)
+    traffic_type = models.CharField('Traffic Type', blank=False, max_length=10)
     timestamp = models.DateTimeField(auto_now=False, auto_now_add=True, blank=False)
     
 
+    def get_transport_protocol(self):
+        if self.transport_protocol == 1:
+            return "TCP"
+        else: 
+            return "UDP"
+    get_transport_protocol.short_description = "Protocol Type"

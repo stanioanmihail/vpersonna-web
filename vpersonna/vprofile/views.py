@@ -10,6 +10,24 @@ from vprofile.models import *
 from django.db.models import Sum
 from dateutil.relativedelta import relativedelta
 
+#time functions:
+def first_day_of_month(d):
+    return datetime.date(d.year, d.month, 1)
+
+def get_today():
+    #change the value here - hardcoded 3-06-2015 22:30
+    date_string = '03-06-2015 22:30'
+    date_format = '%d-%m-%Y %H:%M'
+    today = datetime.datetime.strptime(date_string, date_format)
+    #today = datetime.datetime.today()
+    return today
+
+def get_n_months_ago_date(n):
+    today = get_today()
+    return today + relativedelta(months=-(n))
+
+def get_n_months_ago_date_ref(date, n):
+    return date + relativedelta(months=-(n))
 
 # Create your views here.
 def home(request):
@@ -28,10 +46,7 @@ def dashboard(request, client_id):
     services_list = ServiceType.objects.all()
     top_5_sites = SiteAccess.objects.order_by('-num_accesses')[:5]
 
-    #today - need change
-    date_string = '03-06-2015 22:30'
-    date_format = '%d-%m-%Y %H:%M'
-    today = datetime.datetime.strptime(date_string, date_format)
+    today = get_today() 
 
     dashboard_dict={}
     dashboard_dict_m1={}
@@ -46,29 +61,33 @@ def dashboard(request, client_id):
                                                     date__month=today.month, #stats from current month (not day) 
                                                     date__year=today.year,
                                                     service=s).aggregate(Sum('num_accesses'))
-        dashboard_dict[s.service_name] = crt_service_access.values()[0]
+        #criteria returns nothing
+        dashboard_dict[s.service_name] = crt_service_access.values()[0] if crt_service_access.values()[0] != None else 0 
     
         
-        date_old = today + relativedelta(months=-1)
+        date_old = get_n_months_ago_date(1)
         crt_service_access_m1 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
                                                     date__month=date_old.month,  
                                                     date__year=date_old.year ,  
                                                     service=s).aggregate(Sum('num_accesses'))
-        dashboard_dict_m1[s.service_name] = crt_service_access_m1.values()[0]
+        #criteria returns nothing
+        dashboard_dict_m1[s.service_name] = crt_service_access_m1.values()[0] if crt_service_access_m1.values()[0] != None else 0
 
-        date_older = today + relativedelta(months=-2)
+        date_older = get_n_months_ago_date(2) 
         crt_service_access_m2 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
                                                     date__month=date_older.month,  
                                                     date__year=date_older.year ,  
                                                     service=s).aggregate(Sum('num_accesses'))
-        dashboard_dict_m2[s.service_name] = crt_service_access_m2.values()[0]
+        #criteria returns nothing
+        dashboard_dict_m2[s.service_name] = crt_service_access_m2.values()[0] if crt_service_access_m2.values()[0] != None else 0
 
-        date_oldest = today + relativedelta(months=-3)
+        date_oldest = get_n_months_ago_date(3) 
         crt_service_access_m3 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
-                                                    date__month=date_older.month,  
-                                                    date__year=date_older.year ,  
+                                                    date__month=date_oldest.month,  
+                                                    date__year=date_oldest.year ,  
                                                     service=s).aggregate(Sum('num_accesses'))
-        dashboard_dict_m3[s.service_name] = crt_service_access_m3.values()[0]
+        #criteria returns nothing
+        dashboard_dict_m3[s.service_name] = crt_service_access_m3.values()[0] if crt_service_access_m3.values()[0] != None else 0
 
     #TOP GLOBAL SITES STATS
     top_rate_sites_matrix = []
@@ -82,44 +101,44 @@ def dashboard(request, client_id):
         'dashboard_dict_m2':OrderedDict(sorted(dashboard_dict_m2.items(), key = lambda t: t[0])),
         'dashboard_dict_m3':OrderedDict(sorted(dashboard_dict_m3.items(), key = lambda t: t[0])),
         'top_rate_sites_matrix':top_rate_sites_matrix,
-        'client_id': client_id,
+        'news': news,
         'client': client,
+        'client_id': client_id,
         'year': today.year,
         'month': (today.month - 1) % 12, #google charts: months starts from 00 - January
         'day': today.day,
         'hours': today.hour,
         'minutes': today.minute,
-        'news': news,
         
         
     })
     return HttpResponse(template.render(context))
 
 def stats(request, client_id):
-    #today - need change
-    today = '03-06-2015'
-
+    today = get_today() 
 
     template = loader.get_template('profile/advanced_statistics.html')
     client = Client.objects.get(id = client_id)
     context = RequestContext(request, {
         'client_id': client_id,
-        'today': today,
+        'today': today.strftime("%d-%m-%Y"),
+        'min_date': get_n_months_ago_date_ref(first_day_of_month(today), 3).strftime("%d-%m-%Y"),
     })
     return HttpResponse(template.render(context))
 
 def stats_date(request, client_id):
 
-    date_format = '%d-%m-%Y'
-    
     client = Client.objects.get(id = client_id)
     template = loader.get_template('profile/stats_by_date.html')
+    
+    #date format returned by datepicker
+    date_format = '%d-%m-%Y'
     start_date = datetime.datetime.strptime(request.POST['datepicker-start'], date_format)
     end_date = datetime.datetime.strptime(request.POST['datepicker-end'], date_format)
     
     tag_list = ServiceType.objects.all().order_by('service_name');
 
-    next_day = end_date + datetime.timedelta(days=1) # range is not inclusive so it necessary the date of the next day
+    next_day = end_date + datetime.timedelta(days = 1) # range is not inclusive so it necessary the date of the next day
     traffic_per_timeslot = {} 
 
     for i in range(0, 23):

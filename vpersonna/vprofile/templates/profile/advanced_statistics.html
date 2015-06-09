@@ -3,7 +3,7 @@
 <script type="text/javascript" language="javascript">
     $(function() {
             $("#datepicker-start, #datepicker-end").datepicker({ 
-                        minDate: "-90D", 
+                        minDate: "{{ min_date }}", 
                         maxDate: '{{ today }}',
                         showOn: "button",
                         buttonImage: "/static/images/notebook74.png",
@@ -35,4 +35,5 @@ class="active"
             </div>
         </form>
 </div>
+{{ min_date }}
 {% endblock %}
