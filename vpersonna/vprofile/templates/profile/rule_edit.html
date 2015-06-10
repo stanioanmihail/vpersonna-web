@@ -2,9 +2,12 @@
 {% block header %}
 {% endblock %}
 {% block content %}
-<h1>New rule</h1>
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Save</button>
-    </form>
+<div class="page-header" id="dashboard-header">
+	<h1>New rule</h1>
+</div>
+</br>
+<form method="POST" class="post-form">{% csrf_token %}
+       	{{ form.as_p }}
+       	<button type="submit" class="save btn btn-default">Save</button>
+</form>
 {% endblock %}
