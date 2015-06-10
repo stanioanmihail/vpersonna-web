@@ -5,7 +5,7 @@ class ServiceUtilizationStatisticsModel(admin.ModelAdmin):
     list_display = ("client", "service", "date", "num_accesses")
 
 class BrutePacketModel(admin.ModelAdmin):
-    list_display = ("id", "ip_src", "port_src", "ip_dst", "port_dst", "timestamp", 'get_transport_protocol')
+    list_display = ("id", "ip_src", "port_src", "ip_dst", "port_dst", 'host_address' , 'get_transport_protocol', 'traffic_type', 'timestamp' )
 class IPAllocationModel(admin.ModelAdmin):
     list_display = ("client", "ip_addr")
 # Register your models here.
