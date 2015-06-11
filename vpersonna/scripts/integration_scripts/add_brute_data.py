@@ -24,7 +24,7 @@ def add_data(ip_src, port_src, ip_dst, port_dst, transport_protocol, host, ptype
     bpacket = BrutePacket()
     bpacket.ip_src = ip_src
     bpacket.port_src = port_src
-    bpacket.ip_dst = ip_src
+    bpacket.ip_dst = ip_dst
     bpacket.port_dst = port_dst
     bpacket.transport_protocol = transport_protocol 
     bpacket.host_address = host

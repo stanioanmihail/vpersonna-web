@@ -17,7 +17,13 @@ class Client(models.Model):
     username = models.CharField('Username ', validators=[uname_regex], blank=True, max_length=20)
     password = models.CharField('Password ', blank=True, max_length=20)
     def __str__(self):
-        return self.name + "(" + self.email + ")" 
+      return self.name + "(" + self.email + ")" 
+    def get_name(self):
+        return self.name
+    def get_mail(self):
+        return self.email
+    def get_username(self):
+        return self.username
 
 class ServiceType(models.Model):
     #service_id = models.IntegerField('Service id', blank=False, primary_key=True)
