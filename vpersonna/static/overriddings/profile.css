@@ -1,3 +1,55 @@
+/* Authentication form - login page */
+#username-group.form-group{
+    margin-top: 100px;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+#password-group.form-group{
+    padding-left: 5%;
+    padding-right: 5%;
+}
+#button-login.form-group{
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+}
+#login.btn.btn-default{
+    margin: 0 auto;
+}
+#authentication_form{
+    width: 600px;
+    height: 400px;
+    background-color: white;
+
+    position: absolute;
+    top: 10;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+    border-radius: 6px 6px 6px 6px;
+    border-width: 1px;
+}
+body#authentication_page{
+    background-color: #121;
+}
+#brand_login_div{
+    
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+}
+#brand_login.navbar-brand{
+    top: 15px;
+    left: 50px;
+    font-size: 2.5em;
+    font-weight: 700;
+    font-family: 'Indie Flower';
+    position: relative; 
+/*    top: +25px; */
+}
+
 /* STATS-BY-DATE*/
 #barchart-schedule{
     width: 50%;

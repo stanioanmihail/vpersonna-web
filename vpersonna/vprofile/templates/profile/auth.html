@@ -12,15 +12,27 @@
     <link href="/static/overriddings/bootstrap-extra.css" rel="stylesheet">
     <link href="/static/overriddings/profile.css" rel="stylesheet">
 </head>
-<body>
-{{ state }}
+<body id="authentication_page">
+<div id="authentication_form"> 
+    <div id="brand_login_div">
+    <p class="navbar-brand"  id="brand_login" style="text-align: center;">vPersonna</p></center>
+    </div>
+    <div>
+    </div>
     <form action="/login" method="post">
         {% csrf_token %}
-        username: 
-        <input type="text" name="username" value="{{ username}}" /><br />
-        password:
-        <input type="password" name="password" value="{{ password }}" /><br />
-
-        <input type="submit" value="Log In" />
+        <div class="form-group" id="username-group">
+            <label for="username"> Username: </label>
+            <input type="text" name="username" value="{{ username}}" id="username" class="form-control" placeholder="Username"/><br />
+        </div>
+        <div class="form-group" id="password-group">
+            <label for="password"> Password: </label>
+            <input type="password" name="password" value="{{ password }}" id="password" class="form-control" placeholder="Password"/><br />
+        </div>
+        <center><p style="text-align: center;"> {{ state }} </p></center>
+        <div class="form-group" id="button-login">
+            <input type="submit" value="Log In" class="btn btn-default" id="login"/>
+        </div>
     </form>
+</div>
 </body>

@@ -15,7 +15,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 
 #authentication imports
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.decorators import login_required
@@ -52,11 +52,11 @@ def user_login_required(f):
             
         
 # Create your views here.
-def auth_method(request):
+def auth_method_login(request):
     template = loader.get_template('profile/auth.html')
     username = '';
     password = '';
-    state = 'Insert credentials'
+    state = ''
     if request.POST:
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -65,29 +65,33 @@ def auth_method(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                state = 'Success'
+                state = "You're successfully logged in!"
                 client = Client.objects.get(user=user)
                 request.session['userid'] = client.id
                 return redirect('dashboard')
                 
             else:
-                state = 'Account not active'
+                state = "Your account is not active, please contact the site admin."
         else:
-            state = 'Username/Password incorrect'
+            state = "Your username and/or password were incorrect."
     context = RequestContext(request, {
      'state': state, 
      'username': username,
     })
     return HttpResponse(template.render(context))
+
+def auth_method_logout(request):
+    logout(request)
+    return redirect('login')
+    
                 
 def home(request):
-    client_list = Client.objects.all()
-    template = loader.get_template('profile/index.html')
-    context = {
-        'client_list' : client_list,
-    }
+    #client_list = Client.objects.all()
+    #template = loader.get_template('profile/index.html')
+    #context = {
+    #    'client_list' : client_list,
+    #}
     return redirect('login')
-    return HttpResponse(template.render(context))
 
 @user_login_required 
 def dashboard(request):
