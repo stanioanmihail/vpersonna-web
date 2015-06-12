@@ -1,15 +1,24 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import RequestContext, loader
-from django.utils.timezone import utc
-from collections import OrderedDict
-from .forms import RuleForm
-import datetime
 from django.shortcuts import redirect, get_object_or_404
+
+#database imports
 from vprofile.models import *
 from django.db.models import Sum
+from .forms import RuleForm
+from collections import OrderedDict
+
+#time imports
+from django.utils.timezone import utc
+import datetime
 from dateutil.relativedelta import relativedelta
+
+#authentication imports
 from django.contrib.auth import authenticate, login
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required
 
 #time functions:
 def first_day_of_month(d):
@@ -30,6 +39,18 @@ def get_n_months_ago_date(n):
 def get_n_months_ago_date_ref(date, n):
     return date + relativedelta(months=-(n))
 
+
+# login_decorators
+def user_login_required(f):
+    def wrap(request, *args, **kwargs):
+        if 'userid' not in request.session.keys():
+            return redirect('login')
+        return f(request, *args, **kwargs)
+    wrap.__doc__ = f.__doc__
+    wrap.__name__= f.__name__
+    return wrap
+            
+        
 # Create your views here.
 def auth_method(request):
     template = loader.get_template('profile/auth.html')
@@ -46,7 +67,8 @@ def auth_method(request):
                 login(request, user)
                 state = 'Success'
                 client = Client.objects.get(user=user)
-                return redirect('dashboard', client_id=client.id)
+                request.session['userid'] = client.id
+                return redirect('dashboard')
                 
             else:
                 state = 'Account not active'
@@ -64,12 +86,14 @@ def home(request):
     context = {
         'client_list' : client_list,
     }
+    return redirect('login')
     return HttpResponse(template.render(context))
-    
-def dashboard(request, client_id):
+
+@user_login_required 
+def dashboard(request):
     template = loader.get_template('profile/dashboard.html')
     
-    client = Client.objects.get(id = client_id)
+    client = Client.objects.get(user = request.user)
     news = News.objects.filter(active = True).order_by('-date')
     services_list = ServiceType.objects.all()
     top_5_sites = SiteAccess.objects.order_by('-num_accesses')[:5]
@@ -85,7 +109,7 @@ def dashboard(request, client_id):
     #filter by client_id, month and year. Sum of all num_accesses fields corresponding to 
     #a specific service
     for s in services_list:
-        crt_service_access =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
+        crt_service_access =  ServiceUtilizationStatistics.objects.filter(client=client.id, 
                                                     date__month=today.month, #stats from current month (not day) 
                                                     date__year=today.year,
                                                     service=s).aggregate(Sum('num_accesses'))
@@ -94,7 +118,7 @@ def dashboard(request, client_id):
     
         
         date_old = get_n_months_ago_date(1)
-        crt_service_access_m1 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
+        crt_service_access_m1 =  ServiceUtilizationStatistics.objects.filter(client=client.id, 
                                                     date__month=date_old.month,  
                                                     date__year=date_old.year ,  
                                                     service=s).aggregate(Sum('num_accesses'))
@@ -102,7 +126,7 @@ def dashboard(request, client_id):
         dashboard_dict_m1[s.service_name] = crt_service_access_m1.values()[0] if crt_service_access_m1.values()[0] != None else 0
 
         date_older = get_n_months_ago_date(2) 
-        crt_service_access_m2 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
+        crt_service_access_m2 =  ServiceUtilizationStatistics.objects.filter(client=client.id, 
                                                     date__month=date_older.month,  
                                                     date__year=date_older.year ,  
                                                     service=s).aggregate(Sum('num_accesses'))
@@ -110,7 +134,7 @@ def dashboard(request, client_id):
         dashboard_dict_m2[s.service_name] = crt_service_access_m2.values()[0] if crt_service_access_m2.values()[0] != None else 0
 
         date_oldest = get_n_months_ago_date(3) 
-        crt_service_access_m3 =  ServiceUtilizationStatistics.objects.filter(client=client_id, 
+        crt_service_access_m3 =  ServiceUtilizationStatistics.objects.filter(client=client.id, 
                                                     date__month=date_oldest.month,  
                                                     date__year=date_oldest.year ,  
                                                     service=s).aggregate(Sum('num_accesses'))
@@ -131,7 +155,6 @@ def dashboard(request, client_id):
         'top_rate_sites_matrix':top_rate_sites_matrix,
         'news': news,
         'client': client,
-        'client_id': client_id,
         'year': today.year,
         'month': (today.month - 1) % 12, #google charts: months starts from 00 - January
         'day': today.day,
@@ -142,21 +165,22 @@ def dashboard(request, client_id):
     })
     return HttpResponse(template.render(context))
 
-def stats(request, client_id):
+@user_login_required 
+def stats(request):
     today = get_today() 
 
     template = loader.get_template('profile/advanced_statistics.html')
-    client = Client.objects.get(id = client_id)
+    client = Client.objects.get(user = request.user)
     context = RequestContext(request, {
-        'client_id': client_id,
         'today': today.strftime("%d-%m-%Y"),
         'min_date': get_n_months_ago_date_ref(first_day_of_month(today), 3).strftime("%d-%m-%Y"),
     })
     return HttpResponse(template.render(context))
 
-def stats_date(request, client_id):
+@user_login_required 
+def stats_date(request):
 
-    client = Client.objects.get(id = client_id)
+    client = Client.objects.get(user = request.user)
     template = loader.get_template('profile/stats_by_date.html')
     
     #date format returned by datepicker
@@ -177,7 +201,7 @@ def stats_date(request, client_id):
                 crt_service_accesses = ServiceUtilizationStatistics.objects.filter(
                                                         date__range=[start_date.strftime("%Y-%m-%d"), 
                                                                      next_day.strftime("%Y-%m-%d")], #range is not inclusive
-                                                        client = client_id,
+                                                        client = client.id,
                                                         service = s,
                                                         date__hour=i, 
                                                             ).aggregate(Sum('num_accesses', 
@@ -189,7 +213,7 @@ def stats_date(request, client_id):
                                                         date__month = start_date.month,
                                                         date__day = start_date.day,
                                                         date__hour = i,
-                                                        client = client_id,
+                                                        client = client.id,
                                                         service = s,).aggregate(Sum('num_accesses', default=0))
             else:
                 crt_service_accesses = []
@@ -205,7 +229,6 @@ def stats_date(request, client_id):
     context = RequestContext(request, {
         'traffic_per_timeslot': OrderedDict(sorted(traffic_per_timeslot.items(), key=lambda t: t[0])),
         'tag_list': tag_list,
-        'client_id': client_id,
         'start_date': start_date.strftime("%Y-%b-%d"),
         'end_date': end_date.strftime("%Y-%b-%d"),
         
@@ -214,30 +237,29 @@ def stats_date(request, client_id):
 
     return HttpResponse(template.render(context))
 
-def compute_total_bandwidth(client_id):
-    client = Client.objects.get(id = client_id)
-    rules_list = Rule.objects.filter(client = client_id) 
+def compute_total_bandwidth(request):
+    client = Client.objects.get(user = request.user)
+    rules_list = Rule.objects.filter(client = client.id) 
     bandwidth_total = 0
     
     for rule in rules_list: 
         bandwidth_total = bandwidth_total + rule.bandwidth_percent
     return bandwidth_total
 
-def manage(request, client_id):
-    client = Client.objects.get(id = client_id)
-    rules_list = Rule.objects.filter(client = client_id) 
+def manage(request):
+    client = Client.objects.get(user = request.user)
+    rules_list = Rule.objects.filter(client = client.id) 
     template = loader.get_template('profile/resources_mng.html')
     context = RequestContext(request, {
         'rules_list': rules_list,
-        'total_bw_used' : 100 - compute_total_bandwidth(client_id),
-        'client_id': client_id,
+        'total_bw_used' : 100 - compute_total_bandwidth(request),
         })
     return HttpResponse(template.render(context))
 
 #send client, not client id
-def rule_edit(request, client_id):
-    client = Client.objects.get(id = client_id)
-    bandwidth_total = compute_total_bandwidth(client_id) 
+def rule_edit(request):
+    client = Client.objects.get(user = request.user)
+    bandwidth_total = compute_total_bandwidth(request) 
 
     if request.method == "POST":
         form = RuleForm(request.POST)
@@ -247,15 +269,15 @@ def rule_edit(request, client_id):
             post.client = client
             if post.bandwidth_percent + bandwidth_total <= 100:
                 post.save()
-            return redirect('manage', client_id=client_id)
+            return redirect('manage')
     else:
         form = RuleForm()
-    return render(request, 'profile/rule_edit.html', {'client_id':client_id,'form':form})
+    return render(request, 'profile/rule_edit.html', {'form':form})
 
-def rule_update(request, pk, client_id):
+def rule_update(request, pk):
 
-    bandwidth_total = compute_total_bandwidth(client_id) 
-    rule = get_object_or_404(Rule, pk=pk, client=client_id)
+    bandwidth_total = compute_total_bandwidth(request) 
+    rule = get_object_or_404(Rule, pk=pk)
     crt_bandwidth = rule.bandwidth_percent
 
     if request.method == "POST":
@@ -265,32 +287,30 @@ def rule_update(request, pk, client_id):
             post.author = request.user
             if post.bandwidth_percent + bandwidth_total - crt_bandwidth <= 100:
                 post.save()
-            return redirect('manage', client_id=client_id)
+            return redirect('manage')
     else:
         form = RuleForm(instance=rule)
-    return render(request, 'profile/rule_edit.html', {'client_id':client_id,'form':form})
+    return render(request, 'profile/rule_edit.html', {'form':form})
 
-def rule_delete(request, pk, client_id):
-    client = Client.objects.get(id = client_id)
-    rule = get_object_or_404(Rule, pk=pk, client=client_id)
+def rule_delete(request, pk):
+    client = Client.objects.get(user = request.user)
+    rule = get_object_or_404(Rule, pk=pk)
     rule.delete()
-    return redirect('manage', client_id=client_id)
+    return redirect('manage')
 
-def offers(request, client_id):
-    client = Client.objects.get(id = client_id)
+def offers(request):
+    client = Client.objects.get(user = request.user)
     offers_list = Offer.objects.all() 
     template = loader.get_template('profile/offers.html')
     context = RequestContext(request, {
         'offers_list': offers_list,
-        'client_id': client_id,
         })
     return HttpResponse(template.render(context))
 
-def transactions(request, client_id):
-    client = Client.objects.get(id = client_id)
+def transactions(request):
+    client = Client.objects.get(user = request.user)
     template = loader.get_template('profile/transaction_hist.html')
     context = RequestContext(request, {
-        'client_id': client_id,
     })
     return HttpResponse(template.render(context))
 

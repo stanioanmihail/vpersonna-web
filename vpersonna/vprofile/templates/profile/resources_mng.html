@@ -30,11 +30,11 @@ class="active"
                 <td> {{ rule.bandwidth_percent }} </td> 
                 <td> {{ rule.destination_address }} </td>
                 <td>  
-                    <a class="btn btn-default" href="{% url 'rule_update' client_id=client_id pk=rule.pk %}">
+                    <a class="btn btn-default" href="{% url 'rule_update' pk=rule.pk %}">
                         <span class="glyphicon glyphicon-pencil">
                         </span>
                     </a>
-                    <a class="btn btn-default" href="{% url 'rule_delete' client_id=client_id pk=rule.pk %}">
+                    <a class="btn btn-default" href="{% url 'rule_delete' pk=rule.pk %}">
                         <span class="glyphicon glyphicon-remove-sign">
                         </span>
                     </a>
@@ -49,7 +49,7 @@ class="active"
                 <td><b>  {{ total_bw_used }} / 100</b></td>
                 <td></td> 
                 <td>
-                    <a href="{% url 'vprofile.views.rule_edit' client_id=client_id%}" >Add new rule  
+                    <a href="{% url 'vprofile.views.rule_edit' %}" >Add new rule  
                             <span class="glyphicon glyphicon-plus">
                             </span>
                     </a>

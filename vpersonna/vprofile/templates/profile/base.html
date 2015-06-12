@@ -16,20 +16,20 @@
     <nav class="navbar navbar-inverse" id="banner">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="{% url 'dashboard' client_id=client_id%}" id="brand">vPersonna</a>
+                <a class="navbar-brand" href="{% url 'dashboard' %}" id="brand">vPersonna</a>
             </div>
             <div id="pages-bar">
                 <ul class="nav navbar-nav navbar-right">
                     <li {% block nav-dash %}{% endblock nav-dash %} >
-                        <a href="{% url 'dashboard' client_id=client_id%}" id="dashboard-link">Dashboard</a></li>
+                        <a href="{% url 'dashboard' %}" id="dashboard-link">Dashboard</a></li>
                     <li {% block nav-adv-stats %}{% endblock nav-adv-stats %}>
-                        <a href="{% url 'stats' client_id=client_id%}" id="advanced-stats">Advanced Statistics</a></li>
+                        <a href="{% url 'stats' %}" id="advanced-stats">Advanced Statistics</a></li>
                     <li {% block nav-res-mng %}{% endblock nav-res-mng %}>
-                        <a href="{% url 'manage' client_id=client_id%}" id="res-mng">Resources Management</a></li>
+                        <a href="{% url 'manage' %}" id="res-mng">Resources Management</a></li>
                     <li {% block nav-offers %}{% endblock nav-offers %}>
-                        <a href="{% url 'offers' client_id=client_id%}" id="offers">Offers</a></li>
+                        <a href="{% url 'offers' %}" id="offers">Offers</a></li>
                     <li {% block nav-transactions %}{% endblock nav-transactions %}>
-                        <a href="{% url 'transactions' client_id=client_id%}" id="transactions">Transaction History</a></li>
+                        <a href="{% url 'transactions' %}" id="transactions">Transaction History</a></li>
                 </ul>
             </div>
         </div>

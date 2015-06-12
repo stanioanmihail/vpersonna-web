@@ -16,9 +16,6 @@
 {{ state }}
     <form action="/login" method="post">
         {% csrf_token %}
-        {% if next %}
-        <input type="hidden" name="next" value="{{ next }}" />
-        {% endif %}
         username: 
         <input type="text" name="username" value="{{ username}}" /><br />
         password:
