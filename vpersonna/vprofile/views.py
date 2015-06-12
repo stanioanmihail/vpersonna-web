@@ -9,6 +9,7 @@ from django.shortcuts import redirect, get_object_or_404
 from vprofile.models import *
 from django.db.models import Sum
 from dateutil.relativedelta import relativedelta
+from django.contrib.auth import authenticate, login
 
 #time functions:
 def first_day_of_month(d):
@@ -30,6 +31,33 @@ def get_n_months_ago_date_ref(date, n):
     return date + relativedelta(months=-(n))
 
 # Create your views here.
+def auth_method(request):
+    template = loader.get_template('profile/auth.html')
+    username = '';
+    password = '';
+    state = 'Insert credentials'
+    if request.POST:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                state = 'Success'
+                client = Client.objects.get(user=user)
+                return redirect('dashboard', client_id=client.id)
+                
+            else:
+                state = 'Account not active'
+        else:
+            state = 'Username/Password incorrect'
+    context = RequestContext(request, {
+     'state': state, 
+     'username': username,
+    })
+    return HttpResponse(template.render(context))
+                
 def home(request):
     client_list = Client.objects.all()
     template = loader.get_template('profile/index.html')

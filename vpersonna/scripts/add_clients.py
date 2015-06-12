@@ -14,6 +14,7 @@ import django
 django.setup()
 
 from vprofile.models import Client, IPAllocation 
+from django.contrib.auth.models import User
 
 # Setup Django environment.
 UTF8Writer = codecs.getwriter('utf8')
@@ -29,6 +30,7 @@ def add_data(client_name, client_email, client_addr, pnumber, CNP, contract_nb, 
     client.contract_id = contract_nb
     client.username = uname
     client.password = pwd
+    client.user = User.objects.create_user(username=uname, email=client_email, password=pwd)
     client.save()
 
     ip_alloc = IPAllocation()
@@ -44,6 +46,7 @@ def remove_all_data():
         ia.delete()
     clients = Client.objects.all()
     for c in clients:
+        c.user.delete()
         c.delete()
 
 

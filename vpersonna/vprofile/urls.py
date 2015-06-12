@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.home, name="home"),
+    url(r'^login$', views.auth_method, name="login"),
     url(r'^(?P<client_id>\d+)/dashboard$', views.dashboard, name="dashboard"),
     url(r'^(?P<client_id>\d+)/stats$', views.stats, name="stats"),
     url(r'^(?P<client_id>\d+)/manage$', views.manage, name="manage"),

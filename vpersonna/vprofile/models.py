@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Client(models.Model):
@@ -14,6 +15,7 @@ class Client(models.Model):
     contract_id = models.CharField('Contract', max_length=100)
     contract_type = models.CharField('Contract Type', max_length=100)
     uname_regex = RegexValidator(regex='^[a-z0-9_]{3,16}$', message="Username contains just digits, letters and _")
+    user = models.OneToOneField(User)
     username = models.CharField('Username ', validators=[uname_regex], blank=True, max_length=20)
     password = models.CharField('Password ', blank=True, max_length=20)
     def __str__(self):
