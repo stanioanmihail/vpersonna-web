@@ -6,8 +6,9 @@ from django.shortcuts import redirect, get_object_or_404
 #database imports
 from vprofile.models import *
 from django.db.models import Sum
-from .forms import RuleForm
+from .forms import *
 from collections import OrderedDict
+from django.contrib.auth.models import User
 
 #time imports
 from django.utils.timezone import utc
@@ -84,7 +85,21 @@ def auth_method_logout(request):
     logout(request)
     return redirect('login')
     
-                
+def new_client_admin_method(request):
+
+    if request.method == "POST":
+        form = NewClientForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.user =  User.objects.create_user(username=post.username, email=post.username, password=post.password)  
+            post.save()
+            return redirect('login')
+    else:
+        form = NewClientForm()
+    return render(request, 'profile/admin/new_client_form.html', {'form':form})
+
+               
 def home(request):
     #client_list = Client.objects.all()
     #template = loader.get_template('profile/index.html')
@@ -250,6 +265,7 @@ def compute_total_bandwidth(request):
         bandwidth_total = bandwidth_total + rule.bandwidth_percent
     return bandwidth_total
 
+@user_login_required 
 def manage(request):
     client = Client.objects.get(user = request.user)
     rules_list = Rule.objects.filter(client = client.id) 
@@ -261,6 +277,7 @@ def manage(request):
     return HttpResponse(template.render(context))
 
 #send client, not client id
+@user_login_required 
 def rule_edit(request):
     client = Client.objects.get(user = request.user)
     bandwidth_total = compute_total_bandwidth(request) 
@@ -278,6 +295,7 @@ def rule_edit(request):
         form = RuleForm()
     return render(request, 'profile/rule_edit.html', {'form':form})
 
+@user_login_required 
 def rule_update(request, pk):
 
     bandwidth_total = compute_total_bandwidth(request) 
@@ -296,12 +314,14 @@ def rule_update(request, pk):
         form = RuleForm(instance=rule)
     return render(request, 'profile/rule_edit.html', {'form':form})
 
+@user_login_required 
 def rule_delete(request, pk):
     client = Client.objects.get(user = request.user)
     rule = get_object_or_404(Rule, pk=pk)
     rule.delete()
     return redirect('manage')
 
+@user_login_required 
 def offers(request):
     client = Client.objects.get(user = request.user)
     offers_list = Offer.objects.all() 
@@ -311,6 +331,7 @@ def offers(request):
         })
     return HttpResponse(template.render(context))
 
+@user_login_required 
 def transactions(request):
     client = Client.objects.get(user = request.user)
     template = loader.get_template('profile/transaction_hist.html')
