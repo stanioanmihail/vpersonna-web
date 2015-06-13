@@ -44,6 +44,8 @@ class OfferModel(admin.ModelAdmin):
 class SiteAccessModel(admin.ModelAdmin):
     list_display = ("url", "num_accesses")
 
+class NewsModel(admin.ModelAdmin):
+    list_display = ("title", "date", "active")
 # Register your models here.
 admin.site.register(Client, ClientModel)
 admin.site.register(ServiceType)
@@ -54,4 +56,5 @@ admin.site.register(ServiceUtilizationStatistics, ServiceUtilizationStatisticsMo
 admin.site.register(Activity)
 admin.site.register(BrutePacket, BrutePacketModel)
 admin.site.register(IPAllocation, IPAllocationModel)
+admin.site.register(News, NewsModel)
 

@@ -7,8 +7,6 @@
     <script language="javascript" type="text/javascript" src="/static/bootstrap-3.3.4-dist/js/bootstrap.js"></script>
     <script language="javascript" type="text/javascript" src="/static/jquery/js/jquery-1.11.3.js"></script>
     <script language="javascript" type="text/javascript" src="/static/jquery/js/jquery-ui.js"></script>
-    {% block header %}
-    {% endblock header %}
     <link href="/static/overriddings/bootstrap-extra.css" rel="stylesheet">
     <link href="/static/overriddings/profile.css" rel="stylesheet">
 </head>
@@ -24,35 +22,11 @@
     </nav>
 <div id="padding">
 
-<table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <td>#</td>
-                <td><center><b>Client</b></center></td>
-                <td><center><b>Email</b></center></td>
-                <td><center><b>Action</b></center></td>
-            </tr>
-        </thead>
-        <tbody>
-        {% for client in client_list %}
-            <tr>
-                <td> {{ client.id }} </td> 
-                <td> {{ client.name }} </td> 
-                <td> {{ client.email }} </td> 
-                <td><center><input class="btn btn-info" type="button" onclick='location.href="{% url 'dashboard' client_id=client.id%}"'
-                        value="Login as {{ client.name }}"/></center>
-                </td>
-            </tr>
-        {% endfor %} 
-        </tbody>
-</table>
-
+<div class="page-header" id="dashboard-header">
+	<h1>New Allocation</h1>
 </div>
-    <div id="footer"> 
-        <h5>
-            </br>
-            <center> Powered by vPersonna </center>
-            <center> <a href="https://github.com/stanioanmihail/vpersonna-web">vPersonna Official Web Support Site </a></center>
-        </h5>
-    </div>
-</body>
+</br>
+<form method="POST" class="post-form">{% csrf_token %}
+       	{{ form.as_p }}
+       	<button type="submit" class="save btn btn-default">Save</button>
+</form>

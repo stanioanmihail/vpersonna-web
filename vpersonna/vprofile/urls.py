@@ -6,7 +6,11 @@ urlpatterns = [
     url(r'^$', views.home, name="home"),
     url(r'^login$', views.auth_method_login, name="login"),
     url(r'^logout$', views.auth_method_logout, name="logout"),
+
+    #admin pages
     url(r'^new_client$', views.new_client_admin_method, name="new_client"),
+    url(r'^new_post$', views.new_post_admin_method, name="new_info"),
+    url(r'^new_allocation$', views.new_allocation_admin_method, name="new_ip_alloc"),
 
     #dashboard and statistics
     url(r'^dashboard$', views.dashboard, name="dashboard"),

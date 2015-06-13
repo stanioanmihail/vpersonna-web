@@ -99,6 +99,34 @@ def new_client_admin_method(request):
         form = NewClientForm()
     return render(request, 'profile/admin/new_client_form.html', {'form':form})
 
+def new_post_admin_method(request):
+
+    if request.method == "POST":
+        form = NewsForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('login')
+    else:
+        form = NewsForm()
+    return render(request, 'profile/admin/new_post_form.html', {'form':form})
+
+def new_allocation_admin_method(request):
+
+    if request.method == "POST":
+        form = NewAllocationForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('login')
+    else:
+        form = NewAllocationForm()
+    return render(request, 'profile/admin/new_allocation_form.html', {'form':form})
+
+
+
                
 def home(request):
     #client_list = Client.objects.all()

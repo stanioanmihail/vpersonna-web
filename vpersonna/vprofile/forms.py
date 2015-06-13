@@ -1,7 +1,8 @@
 from django import forms
-from .models import Rule, Client, IPAllocation
+from .models import Rule, Client, IPAllocation, News
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
+from django.contrib.admin import widgets
 
 class RuleForm(forms.ModelForm):
     class Meta:
@@ -17,3 +18,9 @@ class NewAllocationForm(forms.ModelForm):
     class Meta:
         model = IPAllocation
         fields = ['client', 'ip_addr']
+class NewsForm(forms.ModelForm):
+    class Meta:
+        model = News
+        fields = ['title', 'content', 'active', 'date'] 
+        widgets = {'content': forms.Textarea,
+                'date' : forms.DateTimeInput(attrs={'class' : 'date_time_picker'})}
