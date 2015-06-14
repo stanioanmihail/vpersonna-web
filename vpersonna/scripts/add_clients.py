@@ -7,6 +7,7 @@ import sys
 import os
 import codecs
 import datetime
+import hashlib
 # export PYTHONPATH=..
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vpersonna.settings")
@@ -29,7 +30,7 @@ def add_data(client_name, client_email, client_addr, pnumber, CNP, contract_nb, 
     client.card_id = CNP
     client.contract_id = contract_nb
     client.username = uname
-    client.password = pwd
+    client.password = hashlib.sha1(pwd).hexdigest()
     client.user = User.objects.create_user(username=uname, email=client_email, password=pwd)
     client.save()
 
@@ -60,9 +61,9 @@ def read_all_data():
 
 def main():
     remove_all_data()
-    add_data('John Smith','john.smith@example.com', 'Str. A Nb 1', '+123456789', 'ABCDEFGHIJKLM', 'CONTR1', 'john.smith', 'Abcd123!', "1.1.1.1")
-    add_data('John Doe','john.doe@example.com', 'Str. B Nb 2', '+123456780', 'ABCDEFGHIJKLN', 'CONTR2', 'john.doe', 'Abcd123!', "2.2.2.2")
-    add_data('Dan Summer','dan.summer@example.com', 'Str. C Nb 3', '+123456770', 'ABCDEFGHIJKLO', 'CONTR3', 'dan.summer', 'Abcd123!', "3.3.3.3")
+    add_data('John Smith','john.smith@example.com', 'Str. A Nb 1', '+123456789', '1234567890111', 'CONTR1', 'john.smith', 'Abcd123!', "1.1.1.1")
+    add_data('John Doe','john.doe@example.com', 'Str. B Nb 2', '+123456780', '1234567890222', 'CONTR2', 'john.doe', 'Abcd123!', "2.2.2.2")
+    add_data('Dan Summer','dan.summer@example.com', 'Str. C Nb 3', '+123456770', '1234567890333', 'CONTR3', 'dan.summer', 'Abcd123!', "3.3.3.3")
 
     read_all_data()
 

@@ -11,6 +11,7 @@ from django.db.models import Sum
 from .forms import *
 from collections import OrderedDict
 from django.contrib.auth.models import User
+import hashlib
 
 #time imports
 from django.utils.timezone import utc
@@ -99,13 +100,16 @@ def change_password(request):
         form = ChangePassword(request.POST)
         if form.is_valid():
             old_password = form.cleaned_data['old_password']
+            old_password_hash = hashlib.sha1(old_password).hexdigest()
             new_password = form.cleaned_data['new_password']
+            new_password_hash = hashlib.sha1(new_password).hexdigest()
             new_conf_password = form.cleaned_data['new_confirm_password']
+            new_conf_password_hash = hashlib.sha1(new_conf_password).hexdigest()
             client = Client.objects.get(user=request.user)
-            if old_password == client.password:
-                if new_password == new_conf_password:
+            if old_password_hash == client.password:
+                if new_password_hash == new_conf_password_hash:
                     client.user.set_password(new_password)
-                    client.password = new_password
+                    client.password = new_password_hash
                     client.user.save()
                     client.save()
                     return redirect('login')
@@ -157,6 +161,8 @@ def new_client_admin_method(request):
             post = form.save(commit=False)
             post.author = request.user
             post.user =  User.objects.create_user(username=post.username, email=post.username, password=post.password)  
+            password = form.cleaned_data['password']
+            post.password = hashlib.sha1(password).hexdigest()
             post.save()
             return redirect('client_mng')
     else:
@@ -174,10 +180,11 @@ def update_client_admin_method(request, pk):
             post = form.save(commit=False)
             post.author = request.user
             new_password = form.cleaned_data['password_field']
+            new_password_hash = hashlib.sha1(new_password).hexdigest()
             if new_password != "":
                 client.user.set_password(new_password)
                 client.user.save()
-                client.password = new_password
+                client.password = new_password_hash
                 client.save()
             post.save()
             return redirect('client_mng')

@@ -14,11 +14,11 @@ class Client(models.Model):
     card_id = models.CharField('Card ID', validators=[card_id_regex], blank=True, max_length=20)
     address = models.CharField('Address', max_length=300)
     contract_id = models.CharField('Contract', max_length=100)
-    contract_type = models.CharField('Contract Type', max_length=100)
+    contract_type = models.CharField('Contract Type', max_length=100, blank=True)
     uname_regex = RegexValidator(regex='^[a-z0-9_\.]{3,16}$', message="Username contains just digits, letters and _")
     user = models.OneToOneField(User)
     username = models.CharField('Username ', validators=[uname_regex], blank=False, unique=True, max_length=20)
-    password = models.CharField('Password ', blank=False,  max_length=20)
+    password = models.CharField('Password ', blank=False,  max_length=50)
     def __str__(self):
       return self.name + "(" + self.email + ")" 
     def get_name(self):
