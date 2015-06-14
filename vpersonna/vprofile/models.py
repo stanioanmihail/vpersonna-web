@@ -18,7 +18,7 @@ class Client(models.Model):
     uname_regex = RegexValidator(regex='^[a-z0-9_\.]{3,16}$', message="Username contains just digits, letters and _")
     user = models.OneToOneField(User)
     username = models.CharField('Username ', validators=[uname_regex], blank=False, unique=True, max_length=20)
-    password = models.CharField('Password ', blank=False, max_length=20)
+    password = models.CharField('Password ', blank=False,  max_length=20)
     def __str__(self):
       return self.name + "(" + self.email + ")" 
     def get_name(self):

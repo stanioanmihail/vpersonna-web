@@ -8,21 +8,25 @@ class RuleForm(forms.ModelForm):
     class Meta:
         model = Rule
         fields = ('type_of_service', 'bandwidth_percent','destination_address')
+
 class NewClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ['name', 'phone_number', 'email', 'card_id', 'address', 'contract_id', 'username', 'password']
         widgets = {'password': forms.PasswordInput()}
+
 class UpdateClientForm(forms.ModelForm):
+    password_field = forms.CharField(label='Password', min_length=4, max_length=20, required=False, widget=forms.PasswordInput())
     class Meta:
         model = Client
-        fields = ['name', 'phone_number', 'email', 'card_id', 'address', 'contract_id', 'username', 'password']
-        widgets = {'password': forms.PasswordInput(),}
+        fields = ['name', 'phone_number', 'email', 'card_id', 'address', 'contract_id', 'username',]
 
     def __init__(self, *args, **kwargs):
         super(UpdateClientForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget.attrs['readonly'] = True
         self.fields['contract_id'].widget.attrs['readonly'] = True
+
+        
 
 class NewAllocationForm(forms.ModelForm):
     class Meta:
@@ -35,10 +39,11 @@ class NewsForm(forms.ModelForm):
         fields = ['title', 'content', 'active', 'date'] 
         widgets = {'content': forms.Textarea,
                 'date' : forms.DateTimeInput(attrs={'class' : 'date_time_picker'})}
+
 class ChangePassword(forms.Form):
-    old_password = forms.CharField(label='Old password', max_length=20, widget=forms.PasswordInput())
-    new_password = forms.CharField(label='New password', max_length=20, widget=forms.PasswordInput())
-    new_confirm_password = forms.CharField(label='Confirm password', max_length=20, widget=forms.PasswordInput())
+    old_password = forms.CharField(label='Old password', max_length=20, min_length=4, widget=forms.PasswordInput())
+    new_password = forms.CharField(label='New password', max_length=20, min_length=4, widget=forms.PasswordInput())
+    new_confirm_password = forms.CharField(label='Confirm password', max_length=20, min_length=4,widget=forms.PasswordInput())
     
     class Meta:
         fields = ['old_password', 'new_password', 'new_confirm_password'] 

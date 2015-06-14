@@ -174,8 +174,9 @@ def update_client_admin_method(request, pk):
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
-            if post.password != "":
-                client.user.set_password(post.password)
+            new_password = form.cleaned_data['password_field']
+            if new_password != "":
+                client.user.set_password(new_password)
                 client.user.save()
             post.save()
             return redirect('client_mng')
