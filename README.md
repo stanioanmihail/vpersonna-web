@@ -13,14 +13,13 @@
         sudo apt-get install python-pip
         sudo pip install virtualenv
         sudo pip install virtualenvwrapper
-        sudo pip install django
-        sudo pip install dateutils
 
 3. virtual environment setup
 
         virtualenv sandbox
         source sandbox/bin/activate
         pip install django
+        pip install dateutils
 
 4.  database setup
 
@@ -28,12 +27,21 @@
         ./manage.py migrate
         cd scripts/
         ./add_entries.sh 
+        cd integration_scripts/ 
+        ./run_add_brute_data.sh
     
-    this script is generating some test database entries
+    these scripts are generating some test database entries
 
-5. run a http server
+5. manage the database
 
-        cd ..
+        cd ../..
+        ./manage.py createsuperuser
+
+    It will require: username, email, password, password confirmation
+    The admin console is available accessing from browser IP:port/admin (ex: 127.0.0.1:8000/admin)
+
+6. run a http server
+
         ./manage.py runserver 
 
     the server is available on localhost port 8000, but not in LAN
@@ -44,13 +52,7 @@
 
     the server will be available in LAN on port 8000
 
-6. manage the database
 
-        ./manage.py createsuperuser
-
-    It will require: username, password, password confirmation
-    The admin console is available accessing from browser IP:port/admin (ex: 127.0.0.1:8000/admin)
-
-## Test platform details:
+## Test data details:
 
 The static platform adopts 03-June-2015 22:30 as today's date and time.
