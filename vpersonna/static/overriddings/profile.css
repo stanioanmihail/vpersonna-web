@@ -1,3 +1,8 @@
+/* Admin console */
+#admin_action_block{
+    margin: 0 auto;
+    text-align: right;
+}
 /* Authentication form - login page */
 #username-group.form-group{
     margin-top: 100px;

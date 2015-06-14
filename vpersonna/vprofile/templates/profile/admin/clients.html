@@ -8,9 +8,12 @@ class="active"
 <div class="page-header" id="dashboard-header">
         <h1> Clients Management </h1>
 </div>
-<p> Welcome ADMIN USER ! </p>
-<input class="btn btn-info" type="button" onclick='location.href="{% url 'logout' %}"'
+<div id="admin_action_block">
+    <p> Welcome {{ superuser_name }}! &nbsp &nbsp
+    <input class="btn btn-info" type="button" onclick='location.href="{% url 'logout' %}"'
        value="Logout"/>
+    </p>
+</div>
 </br>
 </br>
 <table class="table table-bordered table-hover">
@@ -30,7 +33,7 @@ class="active"
                 <td> {{ client.name }} </td> 
                 <td> {{ client.email }} </td> 
                 <td> {{ client.username }} </td>
-                <td>
+                <td><center>
                     <a class="btn btn-default" href="{% url 'client_update' pk=client.pk %}">
                         <span class="glyphicon glyphicon-pencil">
                         </span>
@@ -39,7 +42,7 @@ class="active"
                         <span class="glyphicon glyphicon-remove-sign">
                         </span>
                     </a>
-                </td>
+                </center></td>
             </tr>
         {% endfor %} 
         </tbody>
@@ -49,12 +52,12 @@ class="active"
                 <td></td> 
                 <td></td> 
                 <td></td> 
-                <td>
+                <td><center>
                     <a href="{% url 'new_client' %}" >Add new client  
                             <span class="glyphicon glyphicon-plus">
                             </span>
                     </a>
-                </td>
+                </center></td>
             </tr>
         </tfoot>
 </table>

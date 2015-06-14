@@ -148,6 +148,7 @@ def client_management(request):
     template = loader.get_template('profile/admin/clients.html')
     context = RequestContext(request, {
         'clients': clients,
+        'superuser_name': request.user.username,
         })
     return HttpResponse(template.render(context))
 
@@ -209,6 +210,7 @@ def news_management(request):
     template = loader.get_template('profile/admin/news.html')
     context = RequestContext(request, {
         'news': news,
+        'superuser_name': request.user.username,
         })
     return HttpResponse(template.render(context))
 
@@ -262,6 +264,7 @@ def ipalloc_management(request):
     template = loader.get_template('profile/admin/ipalloc.html')
     context = RequestContext(request, {
         'ip_alloc_list': ipalloc_list,
+        'superuser_name': request.user.username,
         })
     return HttpResponse(template.render(context))
 
