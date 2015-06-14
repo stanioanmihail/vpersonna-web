@@ -1,7 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.shortcuts import redirect, get_object_or_404
+from django.core.urlresolvers import reverse
+from django.contrib import messages
 
 #database imports
 from vprofile.models import *
@@ -21,12 +23,12 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.decorators import login_required
 
-#time functions:
+######################### TIME FUNCTIONS ########################
 def first_day_of_month(d):
     return datetime.date(d.year, d.month, 1)
 
 def get_today():
-    #change the value here - hardcoded 3-06-2015 22:30
+    #[CHANGE] change the value here - hardcoded 3-06-2015 22:30
     date_string = '03-06-2015 22:30'
     date_format = '%d-%m-%Y %H:%M'
     today = datetime.datetime.strptime(date_string, date_format)
@@ -41,8 +43,8 @@ def get_n_months_ago_date_ref(date, n):
     return date + relativedelta(months=-(n))
 ####################################################################
 
-# LOGIN
-# login_decorators
+######################### AUTHENTICATION ###########################
+# login_decorator which requires authentication for each view that it uses it
 def user_login_required(f):
     def wrap(request, *args, **kwargs):
         if 'userid' not in request.session.keys():
@@ -52,7 +54,7 @@ def user_login_required(f):
     wrap.__name__= f.__name__
     return wrap
             
-        
+# login interface        
 def auth_method_login(request):
     template = loader.get_template('profile/auth.html')
     username = '';
@@ -67,7 +69,7 @@ def auth_method_login(request):
             if user.is_active:
                 login(request, user)
                 state = "You're successfully logged in!"
-                request.session['userid'] = user.id
+                request.session['userid'] = user.id #used for login require decorator
                 if user.is_superuser:
                     return redirect('client_mng')
                 else:
@@ -84,14 +86,60 @@ def auth_method_login(request):
     })
     return HttpResponse(template.render(context))
 
+#logout view
 def auth_method_logout(request):
     logout(request)
     return redirect('login')
-##################################################################################
+
+# ERR - no state sent to page, overidded by state=''
+def change_password(request):
     
+    template = loader.get_template('profile/change_password_form.html')
+    state = ''
+    if request.method == "POST":
+        form = ChangePassword(request.POST)
+        if form.is_valid():
+            old_password = form.cleaned_data['old_password']
+            new_password = form.cleaned_data['new_password']
+            new_conf_password = form.cleaned_data['new_confirm_password']
+            client = Client.objects.get(user=request.user)
+            if old_password == client.password:
+                if new_password == new_conf_password:
+                    client.user.set_password(new_password)
+                    client.password = new_password
+                    client.user.save()
+                    client.save()
+                    return redirect('login')
+                else:
+                    state='New password and confirmation password differ'
+                    messages.add_message(request, messages.INFO, state)
+                    return redirect('change_passwd')
+                    #return HttpResponseRedirect(reverse('change_passwd', kwargs={'state': state}))
+
+
+
+            else:
+                state="The old password doesn' match"
+                messages.add_message(request, messages.INFO, state)
+                return redirect('change_passwd')
+                #return HttpResponseRedirect(reverse('change_passwd', kwargs={'state': state}))
+    else:
+        form = ChangePassword()
+
+    context = RequestContext(request, {
+     'state': state, 
+     'form': form,
+    })
+    return HttpResponse(template.render(context))
+
+
+##################################################################################
+
+############################## ADMIN INTERFACE (superuser) #######################    
+
+#Superuser interface: client management
 @user_login_required 
 @user_passes_test(lambda u: u.is_superuser)
-#Clients management
 def client_management(request):
     clients = Client.objects.all()
     template = loader.get_template('profile/admin/clients.html')
@@ -143,9 +191,8 @@ def delete_client_admin_method(request, pk):
     client.user.delete()
     client.delete()
     return redirect('client_mng')
-##################################################################################
 
-#News management
+#Superuser interface: news management
 @user_login_required 
 @user_passes_test(lambda u: u.is_superuser)
 def news_management(request):
@@ -197,10 +244,8 @@ def delete_post_admin_method(request, pk):
     news.delete()
     return redirect('news_mng')
 
-#############################################################################
 
-#IP Allocation form
-
+#Superuser interface: ip allocation
 @user_login_required 
 @user_passes_test(lambda u: u.is_superuser)
 def ipalloc_management(request):
@@ -251,14 +296,10 @@ def delete_ipalloc_admin_method(request, pk):
     news.delete()
     return redirect('ip_alloc_mng')
 
-###############################################################3
+##################################################################
 
+########################## CLIENT INTERFACE ######################
 def home(request):
-    #client_list = Client.objects.all()
-    #template = loader.get_template('profile/index.html')
-    #context = {
-    #    'client_list' : client_list,
-    #}
     return redirect('login')
 
 @user_login_required 
@@ -409,6 +450,9 @@ def stats_date(request):
 
     return HttpResponse(template.render(context))
 
+# the total amount of resources is idetified by 100% (percent)
+# the allocation of n% bandwidth for a type of service means
+# that remains 100% - n% bandwidth available
 def compute_total_bandwidth(request):
     client = Client.objects.get(user = request.user)
     rules_list = Rule.objects.filter(client = client.id) 

@@ -35,3 +35,11 @@ class NewsForm(forms.ModelForm):
         fields = ['title', 'content', 'active', 'date'] 
         widgets = {'content': forms.Textarea,
                 'date' : forms.DateTimeInput(attrs={'class' : 'date_time_picker'})}
+class ChangePassword(forms.Form):
+    old_password = forms.CharField(label='Old password', max_length=20, widget=forms.PasswordInput())
+    new_password = forms.CharField(label='New password', max_length=20, widget=forms.PasswordInput())
+    new_confirm_password = forms.CharField(label='Confirm password', max_length=20, widget=forms.PasswordInput())
+    
+    class Meta:
+        fields = ['old_password', 'new_password', 'new_confirm_password'] 
+

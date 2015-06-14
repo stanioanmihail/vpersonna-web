@@ -144,9 +144,11 @@
         </div>
         <div  id="news-slot"> 
             <div id="news-feed" class="bs-callout bs-callout-info">
-                <p> Welcome {{ client.name }}! &nbsp &nbsp
+                <p> Welcome {{ client.name }}!  
                     <input class="btn btn-info" type="button" onclick='location.href="{% url 'logout' %}"'
                         value="Logout"/>
+                    <input class="btn btn-warning" type="button" onclick='location.href="{% url 'change_passwd' %}"'
+                        value="Change password"/>
                 </p>
                 <h4> News Feed </h4>
                 {% for n in news %}
