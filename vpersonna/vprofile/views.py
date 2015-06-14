@@ -39,8 +39,9 @@ def get_n_months_ago_date(n):
 
 def get_n_months_ago_date_ref(date, n):
     return date + relativedelta(months=-(n))
+####################################################################
 
-
+# LOGIN
 # login_decorators
 def user_login_required(f):
     def wrap(request, *args, **kwargs):
@@ -52,7 +53,6 @@ def user_login_required(f):
     return wrap
             
         
-# Create your views here.
 def auth_method_login(request):
     template = loader.get_template('profile/auth.html')
     username = '';
@@ -67,9 +67,13 @@ def auth_method_login(request):
             if user.is_active:
                 login(request, user)
                 state = "You're successfully logged in!"
-                client = Client.objects.get(user=user)
-                request.session['userid'] = client.id
-                return redirect('dashboard')
+                if user.is_superuser:
+                    request.session['userid'] = user.id
+                    return redirect('client_mng')
+                else:
+                    client = Client.objects.get(user=user)
+                    request.session['userid'] = client.id
+                    return redirect('dashboard')
                 
             else:
                 state = "Your account is not active, please contact the site admin."
@@ -84,7 +88,21 @@ def auth_method_login(request):
 def auth_method_logout(request):
     logout(request)
     return redirect('login')
+##################################################################################
     
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
+#Clients management
+def client_management(request):
+    clients = Client.objects.all()
+    template = loader.get_template('profile/admin/clients.html')
+    context = RequestContext(request, {
+        'clients': clients,
+        })
+    return HttpResponse(template.render(context))
+
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
 def new_client_admin_method(request):
 
     if request.method == "POST":
@@ -94,11 +112,55 @@ def new_client_admin_method(request):
             post.author = request.user
             post.user =  User.objects.create_user(username=post.username, email=post.username, password=post.password)  
             post.save()
-            return redirect('login')
+            return redirect('client_mng')
     else:
         form = NewClientForm()
     return render(request, 'profile/admin/new_client_form.html', {'form':form})
 
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
+def update_client_admin_method(request, pk):
+
+    client = get_object_or_404(Client, pk=pk)
+    if request.method == "POST":
+        form = UpdateClientForm(request.POST, instance=client)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            if post.password != "":
+                client.user.set_password(post.password)
+                client.user.save()
+            post.save()
+            return redirect('client_mng')
+    else:
+        form = UpdateClientForm(instance=client)
+    return render(request, 'profile/admin/new_client_form.html', {'form':form})
+
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
+def delete_client_admin_method(request, pk):
+
+    client = get_object_or_404(Client, pk=pk)
+    client.user.delete()
+    client.delete()
+    return redirect('client_mng')
+##################################################################################
+
+#News management
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
+def news_management(request):
+    news = News.objects.order_by('-date')
+    template = loader.get_template('profile/admin/news.html')
+    context = RequestContext(request, {
+        'news': news,
+        })
+    return HttpResponse(template.render(context))
+
+
+
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
 def new_post_admin_method(request):
 
     if request.method == "POST":
@@ -107,12 +169,53 @@ def new_post_admin_method(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            return redirect('login')
+            return redirect('news_mng')
     else:
         form = NewsForm()
     return render(request, 'profile/admin/new_post_form.html', {'form':form})
 
-def new_allocation_admin_method(request):
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
+def update_post_admin_method(request, pk):
+
+    news = get_object_or_404(News, pk=pk)
+    if request.method == "POST":
+        form = NewsForm(request.POST, instance=news)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('news_mng')
+    else:
+        form = NewsForm(instance=news)
+    return render(request, 'profile/admin/new_post_form.html', {'form':form})
+
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
+def delete_post_admin_method(request, pk):
+
+    news = get_object_or_404(News, pk=pk)
+    news.delete()
+    return redirect('news_mng')
+
+#############################################################################
+
+#IP Allocation form
+
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
+def ipalloc_management(request):
+    ipalloc_list = IPAllocation.objects.all()
+    template = loader.get_template('profile/admin/ipalloc.html')
+    context = RequestContext(request, {
+        'ip_alloc_list': ipalloc_list,
+        })
+    return HttpResponse(template.render(context))
+
+
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
+def new_ipalloc_admin_method(request):
 
     if request.method == "POST":
         form = NewAllocationForm(request.POST)
@@ -120,14 +223,37 @@ def new_allocation_admin_method(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            return redirect('login')
+            return redirect('ip_alloc_mng')
     else:
         form = NewAllocationForm()
     return render(request, 'profile/admin/new_allocation_form.html', {'form':form})
 
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
+def update_ipalloc_admin_method(request, pk):
 
+    alloc = get_object_or_404(IPAllocation, pk=pk)
+    if request.method == "POST":
+        form = NewAllocationForm(request.POST, instance=alloc)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('ip_alloc_mng')
+    else:
+        form = NewAllocationForm(instance=alloc)
+    return render(request, 'profile/admin/new_allocation_form.html', {'form':form})
 
-               
+@user_login_required 
+@user_passes_test(lambda u: u.is_superuser)
+def delete_ipalloc_admin_method(request, pk):
+
+    news = get_object_or_404(IPAllocation, pk=pk)
+    news.delete()
+    return redirect('ip_alloc_mng')
+
+###############################################################3
+
 def home(request):
     #client_list = Client.objects.all()
     #template = loader.get_template('profile/index.html')

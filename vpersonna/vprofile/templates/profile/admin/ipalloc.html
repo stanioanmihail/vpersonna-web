@@ -1,0 +1,58 @@
+{% extends 'profile/admin/base.html' %}
+{% block header %}
+{% endblock %}
+{% block nav-alloc %}
+class="active"
+{% endblock %}
+{% block content %}
+<div class="page-header" id="dashboard-header">
+        <h1> IP Allocation Management </h1>
+</div>
+<p> Welcome ADMIN USER ! </p>
+<input class="btn btn-info" type="button" onclick='location.href="{% url 'logout' %}"'
+       value="Logout"/>
+</br>
+</br>
+<table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <td>#</td>
+                <td><center><b>Client</b></center></td>
+                <td><center><b>IPAddr</b></center></td>
+                <td><center><b>Action</b></center></td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for alloc in ip_alloc_list %}
+            <tr>
+                <td> {{ forloop.counter }} </td> 
+                <td> {{ alloc.client }} </td> 
+                <td> {{ alloc.ip_addr }} </td> 
+                <td>
+                    <a class="btn btn-default" href="{% url 'ipalloc_update' pk=alloc.pk %}">
+                        <span class="glyphicon glyphicon-pencil">
+                        </span>
+                    </a>
+                    <a class="btn btn-default" href="{% url 'ipalloc_delete' pk=alloc.pk %}">
+                        <span class="glyphicon glyphicon-remove-sign">
+                        </span>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %} 
+        </tbody>
+        <tfoot>
+            <tr>
+                <td></td> 
+                <td></td> 
+                <td></td> 
+                <td>
+                    <a href="{% url 'new_ip_alloc' %}" >Add new ip allocation  
+                            <span class="glyphicon glyphicon-plus">
+                            </span>
+                    </a>
+                </td>
+            </tr>
+        </tfoot>
+</table>
+{% endblock %}

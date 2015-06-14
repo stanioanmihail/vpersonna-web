@@ -8,9 +8,21 @@ urlpatterns = [
     url(r'^logout$', views.auth_method_logout, name="logout"),
 
     #admin pages
+    url(r'^client$', views.client_management, name="client_mng"),
+    url(r'^client_update/(?P<pk>[0-9]+)$', views.update_client_admin_method, name="client_update"),
+    url(r'^client_delete/(?P<pk>[0-9]+)$', views.delete_client_admin_method, name="client_delete"),
     url(r'^new_client$', views.new_client_admin_method, name="new_client"),
-    url(r'^new_post$', views.new_post_admin_method, name="new_info"),
-    url(r'^new_allocation$', views.new_allocation_admin_method, name="new_ip_alloc"),
+
+    url(r'^news$', views.news_management, name="news_mng"),
+    url(r'^news_update/(?P<pk>[0-9]+)$', views.update_post_admin_method, name="news_update"),
+    url(r'^news_delete/(?P<pk>[0-9]+)$', views.delete_post_admin_method, name="news_delete"),
+    url(r'^new_post$', views.new_post_admin_method, name="new_post"),
+    #to change
+    url(r'^ip_alloc_mng$', views.ipalloc_management, name="ip_alloc_mng"),
+    url(r'^ipalloc_update/(?P<pk>[0-9]+)$', views.update_ipalloc_admin_method, name="ipalloc_update"),
+    url(r'^ipalloc_delete/(?P<pk>[0-9]+)$', views.delete_ipalloc_admin_method, name="ipalloc_delete"),
+    url(r'^new_alloc$', views.new_ipalloc_admin_method, name="new_ip_alloc"),
+
 
     #dashboard and statistics
     url(r'^dashboard$', views.dashboard, name="dashboard"),

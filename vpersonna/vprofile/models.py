@@ -75,7 +75,7 @@ class Activity(models.Model):
 class News(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField('News Title', blank=False, max_length=25)
-    content = models.CharField('News Content', blank=False, max_length=255)
+    content = models.CharField('News Content', blank=False, max_length=512)
     active = models.BooleanField('Active/Hidden', blank=False);
     date = models.DateTimeField(auto_now=False, auto_now_add=False, blank=False)
 
