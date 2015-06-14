@@ -67,12 +67,11 @@ def auth_method_login(request):
             if user.is_active:
                 login(request, user)
                 state = "You're successfully logged in!"
+                request.session['userid'] = user.id
                 if user.is_superuser:
-                    request.session['userid'] = user.id
                     return redirect('client_mng')
                 else:
                     client = Client.objects.get(user=user)
-                    request.session['userid'] = client.id
                     return redirect('dashboard')
                 
             else:
