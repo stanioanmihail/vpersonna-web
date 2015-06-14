@@ -91,7 +91,6 @@ def auth_method_logout(request):
     logout(request)
     return redirect('login')
 
-# ERR - no state sent to page, overidded by state=''
 def change_password(request):
     
     template = loader.get_template('profile/change_password_form.html')
@@ -178,6 +177,8 @@ def update_client_admin_method(request, pk):
             if new_password != "":
                 client.user.set_password(new_password)
                 client.user.save()
+                client.password = new_password
+                client.save()
             post.save()
             return redirect('client_mng')
     else:
