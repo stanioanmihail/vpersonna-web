@@ -45,7 +45,7 @@ urlpatterns = [
     url(r'^offers$', views.offers, name="offers"),
 
     #transaction & activities
-    url(r'^transactions$', views.transactions, name="transactions"),
+    url(r'^activity_logs$', views.activity, name="activity"),
 
 
 ]

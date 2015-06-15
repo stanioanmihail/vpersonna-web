@@ -584,10 +584,10 @@ def offers(request):
     return HttpResponse(template.render(context))
 
 @user_login_required 
-def transactions(request):
+def activity(request):
     client = Client.objects.filter(user = request.user)
     activities = Activity.objects.filter(client=client)
-    template = loader.get_template('profile/transaction_hist.html')
+    template = loader.get_template('profile/activity_logs.html')
     context = RequestContext(request, {
         'activities' : activities,
     })
