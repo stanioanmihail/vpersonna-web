@@ -71,6 +71,9 @@ class Activity(models.Model):
     id = models.AutoField(primary_key=True)
     client = models.ForeignKey(Client)
     description = models.CharField('Action Description', blank=False, max_length=100)
+    issuer = models.CharField('Requestor username', blank=False, max_length=100)
+    date = models.DateTimeField(auto_now=True, auto_now_add=False, blank=True)
+    
 
 class News(models.Model):
     id = models.AutoField(primary_key=True)

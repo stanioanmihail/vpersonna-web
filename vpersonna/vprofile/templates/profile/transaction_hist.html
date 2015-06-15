@@ -1,64 +1,34 @@
 {% extends 'profile/base.html' %}
 {% block header %}
-<script type="text/javascript">
-
-     $(document).ready(function(){
-        var i = 0;
-        $("#add_row").click(function(){
-            $('#addr' + i).html(
-                    "<td>"+ (i + 1) + "</td>" +
-                    "<td><input name='name" + i + "' type='text' placeholder='Activity' class='form-control input-md'  /></td>" + 
-                    "<td><input name='mail" + i + "' type='text' placeholder='Date' class='form-control input-md'></td>" + 
-                    "<td><input name='mobile" + i + "' type='text' placeholder='Description' class='form-control input-md'></td>");
-
-            $('#tab_logic').append('<tr id="addr' + (i + 1) + '"></tr>');
-            i++; 
-        });
-
-        $("#delete_row").click(function(){
-            if(i > 0){
-                $("#addr" + (i - 1)).html('');
-                i--;
-            }
-        });
-
-    });
-</script>
 {% endblock header %}
 {% block nav-transactions %}
 class="active"
 {% endblock %}
 {% block content %}
     <div class="page-header" id="dashboard-header">
-        <h1> Activity logs - TBD </h1>
+        <h1> Activity logs </h1>
     </div>
     </br>
     <div class="container">
-        <div class="row clearfix">
-            <div class="col-md-12 column">
-                <table class="table table-bordered table-hover" id="tab_logic">
-                    <thead>
-                        <tr >
-                            <th class="text-center">
-                                #
-                            </th>
-                            <th class="text-center">
-                               	Activity 
-                            </th>
-                            <th class="text-center">
-                                Date
-                            </th>
-                            <th class="text-center">
-                                Description
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr id='addr0'></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <a id="add_row" class="btn btn-default pull-left">Add Row</a>
-        <a id='delete_row' class="pull-right btn btn-default">Delete Row</a>
+        <table class="table table-bordered table-hover" id="tab_logic">
+            <thead>
+                <tr>
+                     <th class="text-center">#</th>
+                     <th class="text-center">Activity Description</th>
+                     <th class="text-center">Date</th>
+                     <th class="text-center">Issuer</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in activities %}
+                <tr>
+                    <td> {{ forloop.counter }} </td> 
+                    <td>{{ activity.description }}</td>
+                    <td>{{ activity.date }} </td>
+                    <td>{{ activity.issuer }} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

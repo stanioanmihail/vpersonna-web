@@ -88,10 +88,12 @@ def auth_method_login(request):
     return HttpResponse(template.render(context))
 
 #logout view
+@user_login_required 
 def auth_method_logout(request):
     logout(request)
     return redirect('login')
 
+@user_login_required 
 def change_password(request):
     
     template = loader.get_template('profile/change_password_form.html')
@@ -112,6 +114,7 @@ def change_password(request):
                     client.password = new_password_hash
                     client.user.save()
                     client.save()
+                    activity_tracker(client, client.name + "'s password changed!", client.username); 
                     return redirect('login')
                 else:
                     state='New password and confirmation password differ'
@@ -135,7 +138,13 @@ def change_password(request):
     })
     return HttpResponse(template.render(context))
 
-
+#logs generator
+def activity_tracker(client, activity_description, req_username):
+    activity = Activity()
+    activity.client = client
+    activity.description = activity_description
+    activity.issuer = req_username
+    activity.save() 
 ##################################################################################
 
 ############################## ADMIN INTERFACE (superuser) #######################    
@@ -165,6 +174,8 @@ def new_client_admin_method(request):
             password = form.cleaned_data['password']
             post.password = hashlib.sha1(password).hexdigest()
             post.save()
+            new_client = Client.objects.get(username=post.username, email=post.email)
+            activity_tracker(new_client, "Client " + new_client.name + " created!", request.user.username); 
             return redirect('client_mng')
     else:
         form = NewClientForm()
@@ -187,7 +198,9 @@ def update_client_admin_method(request, pk):
                 client.user.save()
                 client.password = new_password_hash
                 client.save()
+                activity_tracker(client, client.name + "'s password changed!", request.user.username); 
             post.save()
+            activity_tracker(client, client.name + "'s profile updated!", request.user.username); 
             return redirect('client_mng')
     else:
         form = UpdateClientForm(instance=client)
@@ -279,6 +292,7 @@ def new_ipalloc_admin_method(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
+            activity_tracker(post.client, post.client.name + " have a new ip allocation:" + post.ip_addr + "!", request.user.username); 
             return redirect('ip_alloc_mng')
     else:
         form = NewAllocationForm()
@@ -289,12 +303,22 @@ def new_ipalloc_admin_method(request):
 def update_ipalloc_admin_method(request, pk):
 
     alloc = get_object_or_404(IPAllocation, pk=pk)
+    old_client = alloc.client
+    old_ip = alloc.ip_addr
+
     if request.method == "POST":
         form = NewAllocationForm(request.POST, instance=alloc)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.save()
+            if old_client == post.client and old_ip != post.ip_addr:
+                activity_tracker(post.client, post.client.name + "'s ip allocation changed from" + old_ip + " to " + post.ip_addr + "!", 
+                                request.user.username)
+            elif old_client != post.client:
+                activity_tracker(post.client, post.client.name + " have a new ip allocation:" + post.ip_addr + "!", request.user.username) 
+                activity_tracker(old_client, old_client.name + "'s ip allocation "+ old_ip + "has been deleted!", request.user.username) 
+                 
             return redirect('ip_alloc_mng')
     else:
         form = NewAllocationForm(instance=alloc)
@@ -304,8 +328,9 @@ def update_ipalloc_admin_method(request, pk):
 @user_passes_test(lambda u: u.is_superuser)
 def delete_ipalloc_admin_method(request, pk):
 
-    news = get_object_or_404(IPAllocation, pk=pk)
-    news.delete()
+    alloc = get_object_or_404(IPAllocation, pk=pk)
+    activity_tracker(alloc.client, alloc.client.name +"'s ip allocation "+ alloc.ip_addr + "has been deleted!", request.user.username); 
+    alloc.delete()
     return redirect('ip_alloc_mng')
 
 ##################################################################
@@ -499,6 +524,12 @@ def rule_edit(request):
             post.client = client
             if post.bandwidth_percent + bandwidth_total <= 100:
                 post.save()
+                activity_tracker(client, 
+                    "New rule created(" + 
+                    "bandwidth :" + str(post.bandwidth_percent) + 
+                    ", service : "  + post.type_of_service.service_name + 
+                    ", destination : " +  post.destination_address   + 
+                    " )!", client.username); 
             return redirect('manage')
     else:
         form = RuleForm()
@@ -518,6 +549,12 @@ def rule_update(request, pk):
             post.author = request.user
             if post.bandwidth_percent + bandwidth_total - crt_bandwidth <= 100:
                 post.save()
+                activity_tracker(rule.client, 
+                "Rule updated (" + 
+                "bandwidth :" + str(post.bandwidth_percent) + 
+                ", service : "  + post.type_of_service.service_name + 
+                ", destination : " +  post.destination_address   + 
+                " )!", rule.client.username); 
             return redirect('manage')
     else:
         form = RuleForm(instance=rule)
@@ -527,6 +564,12 @@ def rule_update(request, pk):
 def rule_delete(request, pk):
     client = Client.objects.get(user = request.user)
     rule = get_object_or_404(Rule, pk=pk)
+    activity_tracker(client, 
+    "Rule deleted(" + 
+    " bandwidth :" + str(rule.bandwidth_percent) + 
+    ", service : "  + rule.type_of_service.service_name + 
+    ", destination : " +  rule.destination_address   + 
+    " )!", client.username); 
     rule.delete()
     return redirect('manage')
 
@@ -542,9 +585,11 @@ def offers(request):
 
 @user_login_required 
 def transactions(request):
-    client = Client.objects.get(user = request.user)
+    client = Client.objects.filter(user = request.user)
+    activities = Activity.objects.filter(client=client)
     template = loader.get_template('profile/transaction_hist.html')
     context = RequestContext(request, {
+        'activities' : activities,
     })
     return HttpResponse(template.render(context))
 
