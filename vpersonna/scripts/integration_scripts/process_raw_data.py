@@ -13,7 +13,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vpersonna.settings")
 import django
 django.setup()
 
-from vprofile.models import BrutePacket, IPAllocation, ServiceUtilizationStatistics, SiteAccess, ServiceType
+from vprofile.models import RawPacket, IPAllocation, ServiceUtilizationStatistics, SiteAccess, ServiceType
 from random import randint
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -70,7 +70,6 @@ def update_data_to_SiteAccess(url):
 
 
 def main():
-    #remove_all_data()
    
      
     today_date_string = '03-06-2015 22:30'
@@ -80,27 +79,28 @@ def main():
     ref_date = today_date_hour - datetime.timedelta(minutes=5)
 
     # older than 5 minutes ago
-    brute_packets = BrutePacket.objects.filter(timestamp__lte = ref_date)
+    raw_packets = RawPacket.objects.filter(timestamp_end__lte = ref_date)
 
-    for bp in brute_packets:
-        client = (IPAllocation.objects.get(ip_addr = bp.ip_src)).client
-        if bp.traffic_type == 'Audio':
+    for rp in raw_packets:
+        client = (IPAllocation.objects.get(ip_addr = rp.ip_src)).client
+        if rp.traffic_type == 'AUDIO':
             service = ServiceType.objects.get(service_name='VoIP')
-        elif bp.traffic_type == 'Video': 
+        elif rp.traffic_type == 'VIDEO': 
             service = ServiceType.objects.get(service_name='Video')
-        elif bp.traffic_type ==  'BitTorrent': 
+        elif rp.traffic_type ==  'TORRENT': 
             service = ServiceType.objects.get(service_name='Torrent')
         else: 
             service = ServiceType.objects.get(service_name='Default')
 
-        date = bp.timestamp 
-        url = bp.host_address if bp.host_address != None else bp.ip_dst
+        date_start = rp.timestamp_start 
+        date_end = rp.timestamp_end
+        url = rp.host_address if rp.host_address != None else rp.ip_dst
         
         if client != None: 
-            print client, " ", service, " ", url, " ", date
+            print client, " ", service, " ", url, " ", date_start, " ", date_end
             update_data_to_SiteAccess(url)
             update_data_to_ServiceUtilizationStatistics(client, service, ref_date)
-        bp.delete()
+       # bp.delete()
             
     
 

@@ -2,7 +2,7 @@
 export PYTHONPATH="../.."
 
 echo "### Add brute packets ####"
-python add_brute_data.py
+python add_raw_data.py
 
 echo "### Process brute packets ####"
-python process_brute_data.py 
+python process_raw_data.py 

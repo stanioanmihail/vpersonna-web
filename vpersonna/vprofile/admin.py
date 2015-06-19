@@ -13,9 +13,9 @@ class ServiceUtilizationStatisticsModel(admin.ModelAdmin):
         return obj.client.contract_id
     get_client_contract_id.short_description = 'Client Contract ID'
 
-class BrutePacketModel(admin.ModelAdmin):
+class RawPacketModel(admin.ModelAdmin):
     list_display = ("id", "ip_src", "port_src", "ip_dst", "port_dst", 
-                'host_address' , 'get_transport_protocol', 'traffic_type', 'timestamp' )
+                'host_address' , 'get_transport_protocol', 'traffic_type', 'timestamp_start', 'timestamp_end' )
 
 class IPAllocationModel(admin.ModelAdmin):
     list_display = ("get_client_name", "get_client_mail", "get_client_contract_id","ip_addr")
@@ -54,7 +54,7 @@ admin.site.register(Offer, OfferModel)
 admin.site.register(SiteAccess, SiteAccessModel)
 admin.site.register(ServiceUtilizationStatistics, ServiceUtilizationStatisticsModel)
 admin.site.register(Activity)
-admin.site.register(BrutePacket, BrutePacketModel)
+admin.site.register(RawPacket, RawPacketModel)
 admin.site.register(IPAllocation, IPAllocationModel)
 admin.site.register(News, NewsModel)
 

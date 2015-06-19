@@ -92,18 +92,24 @@ class IPAllocation(models.Model):
     ip_addr = models.CharField('IP address ', validators=[ip_regex], blank=False, max_length=20)
     client = models.ForeignKey(Client)
 
-class BrutePacket(models.Model):
+class RawPacket(models.Model):
     id = models.AutoField(primary_key=True)
     ip_regex = RegexValidator(regex='^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', message='IP format A.B.C.D')
     ip_src = models.CharField('Source IP address ', validators=[ip_regex], blank=False, max_length=20)
     ip_dst = models.CharField('Destination IP address ', validators=[ip_regex], blank=False, max_length=20)
     port_src = models.PositiveIntegerField('Source Port Value', blank=False)
     port_dst = models.PositiveIntegerField('Destination Port Value', blank=False)
-    transport_protocol = models.BooleanField('Transport Layer Protocol: 0-UDP, 1-TCP', blank=False)
+    #transport_protocol = models.BooleanField('Transport Layer Protocol: 0-UDP, 1-TCP', blank=False)
+    transport_protocol = models.CharField('Transport Layer Protocol', blank=True, max_length=7)
     host_address = models.CharField('HTTP Host', blank=True, max_length=50)
     traffic_type = models.CharField('Traffic Type', blank=False, max_length=10)
     #timestamp = models.DateTimeField(auto_now=False, auto_now_add=True, blank=False)
-    timestamp = models.DateTimeField(auto_now=False, auto_now_add=False, blank=False)
+    timestamp_start = models.DateTimeField('Start session', auto_now=False, auto_now_add=False, blank=False)
+    timestamp_end = models.DateTimeField('End session',auto_now=False, auto_now_add=False, blank=False)
+    #timestamp_start = models.CharField('Start session date', blank=False, max_length=49)
+    #timestamp_end = models.CharField('End session date', blank=False, max_length=50)
+    #timestamp_format = models.CharField('Timestamp format', blank=False, max_length=50)
+    nb_bytes = models.PositiveIntegerField('Total bytes number', blank=False)
     
 
     def get_transport_protocol(self):
