@@ -58,14 +58,14 @@ class SiteAccess(models.Model):
     url = models.CharField('Site URL', blank=True, max_length=25)
 #    ip_regex = RegexValidator(regex='^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', message='IP format A.B.C.D')
 #    ip_addr = models.CharField('IP address ', validators=[ip_regex], blank=False, max_length=20)
-    num_accesses = models.PositiveIntegerField('Number of accesses', blank=False)
+    num_accesses = models.PositiveIntegerField('Number of sessions', blank=False)
 
 class ServiceUtilizationStatistics(models.Model):
     id = models.AutoField(primary_key=True)
     client = models.ForeignKey(Client)
     service = models.ForeignKey(ServiceType)
     date = models.DateTimeField(auto_now=False, auto_now_add=False, blank=False)
-    num_accesses = models.PositiveIntegerField('Number of accesses', blank=False)
+    num_accesses = models.PositiveIntegerField('Number of sessions', blank=False)
 
 class Activity(models.Model):
     id = models.AutoField(primary_key=True)
@@ -92,7 +92,7 @@ class IPAllocation(models.Model):
     ip_addr = models.CharField('IP address ', validators=[ip_regex], blank=False, max_length=20)
     client = models.ForeignKey(Client)
 
-class RawPacket(models.Model):
+class RawData(models.Model):
     id = models.AutoField(primary_key=True)
     ip_regex = RegexValidator(regex='^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', message='IP format A.B.C.D')
     ip_src = models.CharField('Source IP address ', validators=[ip_regex], blank=False, max_length=20)
@@ -109,12 +109,13 @@ class RawPacket(models.Model):
     #timestamp_start = models.CharField('Start session date', blank=False, max_length=49)
     #timestamp_end = models.CharField('End session date', blank=False, max_length=50)
     #timestamp_format = models.CharField('Timestamp format', blank=False, max_length=50)
-    nb_bytes = models.PositiveIntegerField('Total bytes number', blank=False)
+    no_bytes = models.PositiveIntegerField('Total bytes number', blank=False)
+    no_packets = models.PositiveIntegerField('Total packets number', blank=False)
     
 
-    def get_transport_protocol(self):
-        if self.transport_protocol == 1:
-            return "TCP"
-        else: 
-            return "UDP"
-    get_transport_protocol.short_description = "Protocol Type"
+    #def get_transport_protocol(self):
+    #    if self.transport_protocol == 1:
+    #        return "TCP"
+    #    else: 
+    #        return "UDP"
+    #get_transport_protocol.short_description = "Protocol Type"

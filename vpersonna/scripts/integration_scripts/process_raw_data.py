@@ -13,7 +13,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vpersonna.settings")
 import django
 django.setup()
 
-from vprofile.models import RawPacket, IPAllocation, ServiceUtilizationStatistics, SiteAccess, ServiceType
+from vprofile.models import RawData, IPAllocation, ServiceUtilizationStatistics, SiteAccess, ServiceType
 from random import randint
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -79,7 +79,7 @@ def main():
     ref_date = today_date_hour - datetime.timedelta(minutes=5)
 
     # older than 5 minutes ago
-    raw_packets = RawPacket.objects.filter(timestamp_end__lte = ref_date)
+    raw_packets = RawData.objects.filter(timestamp_end__lte = ref_date)
 
     for rp in raw_packets:
         client = (IPAllocation.objects.get(ip_addr = rp.ip_src)).client

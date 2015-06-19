@@ -13,15 +13,15 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vpersonna.settings")
 import django
 django.setup()
 
-from vprofile.models import RawPacket, IPAllocation
+from vprofile.models import RawData, IPAllocation
 from random import randint
 
 # Setup Django environment.
 UTF8Writer = codecs.getwriter('utf8')
 sys.stdout = UTF8Writer(sys.stdout)
 
-def add_data(ip_src, port_src, ip_dst, port_dst, transport_protocol, host, ptype, timestamp_start, timestamp_end, nb_bytes):
-    rpacket = RawPacket()
+def add_data(ip_src, port_src, ip_dst, port_dst, transport_protocol, host, ptype, timestamp_start, timestamp_end, no_bytes, no_packets):
+    rpacket = RawData()
     rpacket.ip_src = ip_src
     rpacket.port_src = port_src
     rpacket.ip_dst = ip_dst
@@ -31,17 +31,18 @@ def add_data(ip_src, port_src, ip_dst, port_dst, transport_protocol, host, ptype
     rpacket.traffic_type = ptype
     rpacket.timestamp_start = timestamp_start
     rpacket.timestamp_end = timestamp_end
-    rpacket.nb_bytes = nb_bytes
+    rpacket.no_bytes = no_bytes
+    rpacket.no_packets = no_packets
     rpacket.save()
     
 
 def remove_all_data():
-    rpackets = RawPacket.objects.all()
+    rpackets = RawData.objects.all()
     for rp in rpackets:
         rp.delete()
 
 def read_all_data():
-    rpackets = RawPacket.objects.all()
+    rpackets = RawData.objects.all()
     for rp in rpackets:
         print rp.__dict__
 
@@ -65,19 +66,19 @@ def main():
         
 #def add_data(ip_src, port_src, ip_dst, port_dst, transport_protocol, host, ptype, timestamp_start, timestamp_end, nb_bytes):
         add_data(ip_allocation_list[randint(0, number_of_clients - 1)].ip_addr, 12345, "216.58.209.174", "443", "TCP", 
-                                                                        'google.com', 'DEFAULT', crt_date, one_min_later, 120)
+                                                                        'google.com', 'DEFAULT', crt_date, one_min_later, 120, 10)
         add_data(ip_allocation_list[randint(0, number_of_clients - 1)].ip_addr, 12345, "173.252.120.6", "443", "TCP", 
-                                                                        'facebook.com','VIDEO', crt_date, one_min_later, 120)
+                                                                        'facebook.com','VIDEO', crt_date, one_min_later, 120, 10)
         add_data(ip_allocation_list[randint(0, number_of_clients - 1)].ip_addr, 12345, "54.215.82.230", "443", "TCP", 
-                                                                        '9gag.com', 'HTTP', crt_date, one_min_later, 120)
+                                                                        '9gag.com', 'HTTP', crt_date, one_min_later, 120, 10),
         add_data(ip_allocation_list[randint(0, number_of_clients - 1)].ip_addr, 12345, "216.58.209.174", "443", "TCP", 
-                                                                        'youtube.com', 'VIDEO', crt_date, one_min_later, 120)
+                                                                        'youtube.com', 'VIDEO', crt_date, one_min_later, 120, 10)
         add_data(ip_allocation_list[randint(0, number_of_clients - 1)].ip_addr, 12345, "216.58.209.174", "443", "UDP", 
-                                                                        'mail.google.com', 'AUDIO', crt_date, one_min_later, 120)
+                                                                        'mail.google.com', 'AUDIO', crt_date, one_min_later, 120, 10)
         add_data(ip_allocation_list[randint(0, number_of_clients - 1)].ip_addr, 12345, "4.4.4.4", "6882", "TCP", 
-                                                                        'ubuntu.com', 'TORRENT', crt_date, one_min_later, 120)
+                                                                        'ubuntu.com', 'TORRENT', crt_date, one_min_later, 120, 10)
         add_data(ip_allocation_list[randint(0, number_of_clients - 1)].ip_addr, 12345, "5.5.5.5", "6883", "TCP", 
-                                                                        'ubuntu.com', 'TORRENT', crt_date, one_min_later, 120)
+                                                                        'ubuntu.com', 'TORRENT', crt_date, one_min_later, 120, 10)
         crt_date += datetime.timedelta(minutes = 1)
     
     read_all_data()
