@@ -11,6 +11,8 @@
 2. install django
 
         sudo apt-get install python-pip
+        sudo apt-get install python-dev
+        sudo apt-get install postgresql postgresql-contrib
         sudo pip install virtualenv
         sudo pip install virtualenvwrapper
 
@@ -20,8 +22,17 @@
         source sandbox/bin/activate
         pip install django
         pip install dateutils
+        pip install psycopg2 
 
 4.  database setup
+
+        sudo apt-get install postgresql postgresql-contrib
+        sudo su - postgres
+        createdb vpersonna
+        createuser -P vpersonna
+        psql
+        GRANT ALL PRIVILEGES ON DATABASE vpersonna TO vpersonna;
+    Ctrl+D x 2
 
         cd vpersonna/
         ./manage.py migrate

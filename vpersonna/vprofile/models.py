@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Client(models.Model):
-    id = models.IntegerField('Client ID', blank=False, primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField('Client Name', max_length=200)
     phone_regex = RegexValidator(regex='^\\+?1?\\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone_number = models.CharField('Phone Number', validators=[phone_regex], blank=True, max_length=20)
@@ -78,7 +78,7 @@ class Activity(models.Model):
 class News(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField('News Title', blank=False, max_length=25)
-    content = models.CharField('News Content', blank=False, max_length=512)
+    content = models.CharField('News Content', blank=False, max_length=4096)
     active = models.BooleanField('Active/Hidden', blank=False);
     date = models.DateTimeField(auto_now=False, auto_now_add=False, blank=False)
 
