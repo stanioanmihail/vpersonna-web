@@ -12,6 +12,7 @@
 
         sudo apt-get install python-pip
         sudo apt-get install python-dev
+        sudo apt-get install libpq-dev
         sudo apt-get install postgresql postgresql-contrib
         sudo pip install virtualenv
         sudo pip install virtualenvwrapper
