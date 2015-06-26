@@ -75,10 +75,10 @@ The static platform adopts 03-June-2015 22:30 as today's date and time.
     
 	    vim /etc/profile
 
-    add those at the buttom:
+    add those lines at the buttom of the document:
 
         PATH=PATH=$PATH:/usr/lib/postgresql/9.1/bin
-	export PATH
+        export PATH
 	
     create initial db postgres:	
 
@@ -89,5 +89,8 @@ The static platform adopts 03-June-2015 22:30 as today's date and time.
     start server:
 
         pg_ctl -D db -l logfile start 
+
+    exit shell:
+
         exit
 			
