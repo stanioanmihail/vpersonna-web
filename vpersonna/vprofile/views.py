@@ -175,7 +175,7 @@ def new_client_admin_method(request):
             post.password = hashlib.sha1(password).hexdigest()
             post.save()
             new_client = Client.objects.get(username=post.username, email=post.email)
-            activity_tracker(new_client, "Client " + new_client.name + " created!", request.user.username); 
+            activity_tracker(new_client, "Client " + new_client.name + " account created!", request.user.username); 
             return redirect('client_mng')
     else:
         form = NewClientForm()
@@ -292,7 +292,7 @@ def new_ipalloc_admin_method(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            activity_tracker(post.client, post.client.name + " have a new ip allocation:" + post.ip_addr + "!", request.user.username); 
+            activity_tracker(post.client, post.client.name + " has a new ip allocation: " + post.ip_addr + "!", request.user.username); 
             return redirect('ip_alloc_mng')
     else:
         form = NewAllocationForm()
@@ -313,11 +313,11 @@ def update_ipalloc_admin_method(request, pk):
             post.author = request.user
             post.save()
             if old_client == post.client and old_ip != post.ip_addr:
-                activity_tracker(post.client, post.client.name + "'s ip allocation changed from" + old_ip + " to " + post.ip_addr + "!", 
+                activity_tracker(post.client, post.client.name + "'s ip allocation changed from " + old_ip + " to " + post.ip_addr + "!", 
                                 request.user.username)
             elif old_client != post.client:
-                activity_tracker(post.client, post.client.name + " have a new ip allocation:" + post.ip_addr + "!", request.user.username) 
-                activity_tracker(old_client, old_client.name + "'s ip allocation "+ old_ip + "has been deleted!", request.user.username) 
+                activity_tracker(post.client, post.client.name + " has a new ip allocation: " + post.ip_addr + ".", request.user.username) 
+                activity_tracker(old_client, old_client.name + "'s ip allocation "+ old_ip + " has been deleted!", request.user.username) 
                  
             return redirect('ip_alloc_mng')
     else:
@@ -329,7 +329,7 @@ def update_ipalloc_admin_method(request, pk):
 def delete_ipalloc_admin_method(request, pk):
 
     alloc = get_object_or_404(IPAllocation, pk=pk)
-    activity_tracker(alloc.client, alloc.client.name +"'s ip allocation "+ alloc.ip_addr + "has been deleted!", request.user.username); 
+    activity_tracker(alloc.client, alloc.client.name +"'s ip allocation "+ alloc.ip_addr + " has been deleted!", request.user.username); 
     alloc.delete()
     return redirect('ip_alloc_mng')
 
@@ -524,12 +524,20 @@ def rule_edit(request):
             post.client = client
             if post.bandwidth_percent + bandwidth_total <= 100:
                 post.save()
-                activity_tracker(client, 
-                    "New rule created(" + 
-                    "bandwidth :" + str(post.bandwidth_percent) + 
-                    ", service : "  + post.type_of_service.service_name + 
-                    ", destination : " +  post.destination_address   + 
-                    " )!", client.username); 
+                if post.destination_address != '':
+                    activity_tracker(post.client, 
+                     "["+ str(post.rule_id) + "] "+ "New Rule (" + 
+                    "bandwidth:" + str(post.bandwidth_percent) + ", " +
+                    "service: "  + post.type_of_service.service_name + ", " +
+                    "destination: " +  post.destination_address   + 
+                    " ).", post.client.username); 
+                else:
+                     activity_tracker(post.client, 
+                     "["+ str(post.rule_id) + "] "+ "New Rule (" + 
+                    "bandwidth:" + str(post.bandwidth_percent) + ", " +
+                    "service: "  + post.type_of_service.service_name + ", " +
+                    "destination: " +  "N/A"   + 
+                    " ).", post.client.username);
             return redirect('manage')
     else:
         form = RuleForm()
@@ -549,12 +557,20 @@ def rule_update(request, pk):
             post.author = request.user
             if post.bandwidth_percent + bandwidth_total - crt_bandwidth <= 100:
                 post.save()
-                activity_tracker(rule.client, 
-                "Rule updated (" + 
-                "bandwidth :" + str(post.bandwidth_percent) + 
-                ", service : "  + post.type_of_service.service_name + 
-                ", destination : " +  post.destination_address   + 
-                " )!", rule.client.username); 
+                if post.destination_address != '':
+                    activity_tracker(rule.client, 
+                     "["+ str(pk) + "] "+ "Rule updated (" + 
+                    "bandwidth:" + str(post.bandwidth_percent) + ", " +
+                    "service: "  + post.type_of_service.service_name + ", " +
+                    "destination: " +  post.destination_address   + 
+                    " ).", rule.client.username); 
+                else:
+                     activity_tracker(rule.client, 
+                     "["+ str(pk) + "] "+ "Rule updated (" + 
+                    "bandwidth:" + str(post.bandwidth_percent) + ", " +
+                    "service: "  + post.type_of_service.service_name + ", " +
+                    "destination: " +  "N/A"   + 
+                    " ).", rule.client.username);
             return redirect('manage')
     else:
         form = RuleForm(instance=rule)
@@ -564,12 +580,21 @@ def rule_update(request, pk):
 def rule_delete(request, pk):
     client = Client.objects.get(user = request.user)
     rule = get_object_or_404(Rule, pk=pk)
-    activity_tracker(client, 
-    "Rule deleted(" + 
-    " bandwidth :" + str(rule.bandwidth_percent) + 
-    ", service : "  + rule.type_of_service.service_name + 
-    ", destination : " +  rule.destination_address   + 
-    " )!", client.username); 
+    if rule.destination_address != '':
+        activity_tracker(rule.client, 
+            "["+ str(rule.rule_id) + "] "+ "Rule deleted (" + 
+            "bandwidth:" + str(rule.bandwidth_percent) + ", " +
+             "service: "  + rule.type_of_service.service_name + ", " +
+             "destination: " +  rule.destination_address   + 
+             " ).", rule.client.username); 
+    else:
+        activity_tracker(rule.client, 
+            "["+ str(rule.rule_id) + "] "+ "Rule deleted (" + 
+            "bandwidth:" + str(rule.bandwidth_percent) + ", " +
+            "service: "  + rule.type_of_service.service_name + ", " +
+            "destination: " +  "N/A"   + 
+            " ).", rule.client.username);
+
     rule.delete()
     return redirect('manage')
 
