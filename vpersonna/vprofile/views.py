@@ -175,7 +175,7 @@ def new_client_admin_method(request):
             post.password = hashlib.sha1(password).hexdigest()
             post.save()
             new_client = Client.objects.get(username=post.username, email=post.email)
-            activity_tracker(new_client, "Client " + new_client.name + " account created!", request.user.username); 
+            activity_tracker(new_client, new_client.name + "'s account created!", request.user.username); 
             return redirect('client_mng')
     else:
         form = NewClientForm()
