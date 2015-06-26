@@ -67,3 +67,19 @@
 ## Test data details:
 
 The static platform adopts 03-June-2015 22:30 as today's date and time.
+
+## Possible errors:
+DB Socket:
+		vim /etc/profile
+	add at the buttom:
+		PATH=PATH=$PATH:/usr/lib/postgresql/9.1/bin
+		export PATH
+	
+		
+		sudo su - postgres
+		mkdir db/
+		initdb db/
+	start server:
+		pg_ctl -D db -l logfile start 
+		exit
+			
