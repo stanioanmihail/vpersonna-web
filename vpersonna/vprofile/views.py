@@ -611,7 +611,7 @@ def offers(request):
 @user_login_required 
 def activity(request):
     client = Client.objects.filter(user = request.user)
-    activities = Activity.objects.filter(client=client)
+    activities = Activity.objects.filter(client=client).order_by('-date')
     template = loader.get_template('profile/activity_logs.html')
     context = RequestContext(request, {
         'activities' : activities,
