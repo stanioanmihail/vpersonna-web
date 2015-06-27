@@ -56,8 +56,10 @@ def main():
 
     remove_all_data()
 
+    #HARDCODED DATE
     #today's date is hardcoded 
-    today = datetime.datetime.strptime("2015-06-03 22:30", date_format)
+    #today = datetime.datetime.strptime("2015-06-03 22:30", date_format)
+    today = datetime.datetime.today()
     end_date = today
     start_ref_date = end_date + relativedelta(months=-3)
     start_date = start_ref_date.replace(hour = 8, minute = today.minute)

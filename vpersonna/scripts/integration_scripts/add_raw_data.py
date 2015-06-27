@@ -49,13 +49,16 @@ def read_all_data():
 def main():
     remove_all_data()
    
+    #HARDCODED DATE
     #test data 3 June 2015 
-    end_date_string = '03-06-2015 22:30'
-    start_date_string = '03-06-2015 22:15'
-    date_format = '%d-%m-%Y %H:%M'
+    #end_date_string = '03-06-2015 22:30'
+    #start_date_string = '03-06-2015 22:15'
+    #date_format = '%d-%m-%Y %H:%M'
+    #start_date = datetime.datetime.strptime(start_date_string, date_format)
+    #end_date = datetime.datetime.strptime(end_date_string, date_format)
 
-    start_date = datetime.datetime.strptime(start_date_string, date_format)
-    end_date = datetime.datetime.strptime(end_date_string, date_format)
+    start_date = datetime.datetime.today() - datetime.timedelta(hours = 4)
+    end_date = datetime.datetime.today() - datetime.timedelta(minutes = 5)
     crt_date = start_date
     
     ip_allocation_list = IPAllocation.objects.all()

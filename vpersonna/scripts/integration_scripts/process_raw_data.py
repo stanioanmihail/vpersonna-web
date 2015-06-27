@@ -71,10 +71,11 @@ def update_data_to_SiteAccess(url):
 
 def main():
    
-     
-    today_date_string = '03-06-2015 22:30'
-    date_format = '%d-%m-%Y %H:%M'
-    today_date_hour = datetime.datetime.strptime(today_date_string, date_format)
+    #HARDCODED DATE  
+    #today_date_string = '03-06-2015 22:30'
+    #date_format = '%d-%m-%Y %H:%M'
+    #today_date_hour = datetime.datetime.strptime(today_date_string, date_format)
+    today_date_hour = datetime.datetime.today()
 
     ref_date = today_date_hour - datetime.timedelta(minutes=5)
 
@@ -99,8 +100,8 @@ def main():
         if client != None: 
             print client, " ", service, " ", url, " ", date_start, " ", date_end
             update_data_to_SiteAccess(url)
-            update_data_to_ServiceUtilizationStatistics(client, service, ref_date)
-       # bp.delete()
+            update_data_to_ServiceUtilizationStatistics(client, service, date_end)
+       # rp.delete()
             
     
 
