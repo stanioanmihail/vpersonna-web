@@ -24,6 +24,7 @@
         pip install django
         pip install dateutils
         pip install psycopg2 
+        pip install django-debug-toolbar
 
 4.  database setup
 

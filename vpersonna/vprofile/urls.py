@@ -1,5 +1,6 @@
-from django.conf.urls import include, url
+from django.conf.urls import include, url, patterns
 from . import views
+from django.conf import settings
 
 urlpatterns = [
     #auth views
@@ -49,4 +50,3 @@ urlpatterns = [
 
 
 ]
-
