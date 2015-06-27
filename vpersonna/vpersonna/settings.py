@@ -145,3 +145,9 @@ STATICFILES_DIRS = (
  #   'debug_toolbar.panels.redirects.RedirectsPanel',
 #]
 
+def custom_show_toolbar(request):
+     return True  # Always show toolbar, for example purposes only.
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': 'vpersonna.settings.custom_show_toolbar',
+}
