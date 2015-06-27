@@ -67,9 +67,6 @@
     the server will be available in LAN on port 8000
 
 
-## Test data details:
-
-The static platform adopts 03-June-2015 22:30 as today's date and time.
 
 ## Possible errors
 1. DB socket error - workaround:
