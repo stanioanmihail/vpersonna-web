@@ -29,11 +29,12 @@ def first_day_of_month(d):
     return datetime.date(d.year, d.month, 1)
 
 def get_today():
+    #HARDCODED DATE
     #[CHANGE] change the value here - hardcoded 3-06-2015 22:30
-    date_string = '03-06-2015 22:30'
-    date_format = '%d-%m-%Y %H:%M'
-    today = datetime.datetime.strptime(date_string, date_format)
-    #today = datetime.datetime.today()
+    #date_string = '03-06-2015 22:30'
+    #date_format = '%d-%m-%Y %H:%M'
+    #today = datetime.datetime.strptime(date_string, date_format)
+    today = datetime.datetime.today()
     return today
 
 def get_n_months_ago_date(n):
