@@ -49,7 +49,7 @@ def main():
     add_data("aliexpress.ro", 9000)
     add_data("imdb.com", 8000)
     add_data("facebook.com", 900000)
-    add_data("olx.ro", 39900)
+    add_data("example.ro", 39900)
     read_all_data()
 
 if __name__ == "__main__":

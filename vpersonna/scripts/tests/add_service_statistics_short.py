@@ -45,15 +45,15 @@ def read_all_data():
 def daterange_work(start_ref_date, end_date):
     delta_1H=datetime.timedelta(hours=1) 
     delta_2H=datetime.timedelta(hours=2) 
-    delta_15H=datetime.timedelta(hours=15) 
+    delta_16H=datetime.timedelta(hours=16) 
     start_date = start_ref_date.replace(day = 1, hour = 9, minute = start_ref_date.minute) 
     crt_date = start_date
     while crt_date < end_date:
         yield crt_date
-        if (crt_date.hour >= 9 and crt_date.hour < 12) or (crt_date.hour >= 14 and crt_date.hour < 18):
+        if (crt_date.hour >= 9 and crt_date.hour < 12) or (crt_date.hour >= 14 and crt_date.hour < 17):
             crt_date +=delta_1H
-        elif crt_date.hour == 18:
-            crt_date +=delta_15H
+        elif crt_date.hour == 17:
+            crt_date +=delta_16H
         elif crt_date.hour == 12:
             crt_date +=delta_2H
             
@@ -70,7 +70,7 @@ def main():
     #today = datetime.datetime.strptime("2015-06-03 22:30", date_format)
     today = datetime.datetime.today()
 
-    end_date = today
+    end_date = today.replace(hour=20, minute=30)
     start_date = end_date + relativedelta(months=-3)
     
     seed(1)    

@@ -57,18 +57,19 @@ def main():
     #start_date = datetime.datetime.strptime(start_date_string, date_format)
     #end_date = datetime.datetime.strptime(end_date_string, date_format)
 
-    start_date = datetime.datetime.today() - datetime.timedelta(hours = 2) - datetime.timedelta(minutes = 15)
-    end_date = datetime.datetime.today() - datetime.timedelta(minutes = 15)
+    today = datetime.datetime.today().replace(hour=20, minute = 0) 
+    start_date = today - datetime.timedelta(hours = 2) - datetime.timedelta(minutes = 16)
+    end_date = today - datetime.timedelta(minutes = 16)
     crt_date = start_date
     
     ip_allocation_list = IPAllocation.objects.all()
     number_of_clients = len(ip_allocation_list)
 
-    while crt_date <= end_date:
+    while crt_date < end_date:
         one_min_later = crt_date + datetime.timedelta(minutes = 1)
         
         add_data("92.81.85.239", 12111, "91.189.92.151", "6882", "TCP", 'releases.ubuntu.com', 'TORRENT', crt_date, one_min_later, 120, 10)
-        add_data("92.81.85.239", 12112, "5.134.209.113", "443", "TCP", 'olx.ro','DEFAULT', crt_date, one_min_later, 120, 10)
+        add_data("92.81.85.239", 12112, "5.134.209.113", "443", "TCP", 'example.ro','DEFAULT', crt_date, one_min_later, 120, 10)
         add_data("92.81.85.239", 12113, "173.252.120.6", "443", "TCP", 'facebook.com', 'DEFAULT', crt_date, one_min_later, 120, 10),
         add_data("92.81.85.239", 12114, "216.58.209.174", "443", "TCP",'youtube.com', 'VIDEO', crt_date, one_min_later, 120, 10)
         add_data("92.81.85.239", 12115, "92.81.85.238", "443", "UDP",'', 'AUDIO', crt_date, one_min_later, 120, 10)

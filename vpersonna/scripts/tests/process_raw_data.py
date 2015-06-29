@@ -75,7 +75,7 @@ def main():
     #today_date_string = '03-06-2015 22:30'
     #date_format = '%d-%m-%Y %H:%M'
     #today_date_hour = datetime.datetime.strptime(today_date_string, date_format)
-    today_date_hour = datetime.datetime.today()
+    today_date_hour = datetime.datetime.today().replace(hour=20, minute=30)
 
     ref_date = today_date_hour - datetime.timedelta(minutes=5)
 
