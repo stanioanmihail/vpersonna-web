@@ -98,7 +98,7 @@ def main():
         url = rp.host_address if rp.host_address != None else rp.ip_dst
         
         if client != None: 
-            print client, " ", service, " ", url, " ", date_start, " ", date_end
+            #print client, " ", service, " ", url, " ", date_start, " ", date_end
             update_data_to_SiteAccess(url)
             update_data_to_ServiceUtilizationStatistics(client, service, date_end)
         rp.delete()
