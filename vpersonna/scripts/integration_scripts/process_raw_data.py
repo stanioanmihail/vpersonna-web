@@ -83,7 +83,15 @@ def main():
     raw_packets = RawData.objects.filter(timestamp_end__lte = ref_date)
 
     for rp in raw_packets:
-        client = (IPAllocation.objects.get(ip_addr = rp.ip_src)).client
+        try:
+            client = (IPAllocation.objects.get(ip_addr = rp.ip_src)).client
+        except ObjectDoesNotExist:
+            client = None
+        try:
+            client2 = (IPAllocation.objects.get(ip_addr = rp.ip_dst)).client
+        except ObjectDoesNotExist:
+            client2 = None
+
         if rp.traffic_type == 'AUDIO':
             service = ServiceType.objects.get(service_name='VoIP')
         elif rp.traffic_type == 'VIDEO': 
@@ -97,10 +105,28 @@ def main():
         date_end = rp.timestamp_end
         url = rp.host_address if rp.host_address != None else rp.ip_dst
         
-        if client != None: 
+        if client != None and client2 == None: 
             print client, " ", service, " ", url, " ", date_start, " ", date_end
             update_data_to_SiteAccess(url)
             update_data_to_ServiceUtilizationStatistics(client, service, date_end)
+        elif client == None and client2 != None: 
+            print client, " ", service, " ", url, " ", date_start, " ", date_end
+            update_data_to_SiteAccess(url)
+            update_data_to_ServiceUtilizationStatistics(client2, service, date_end)
+        elif client != None and client2 != None:
+            print client, " ", service, " ", url, " ", date_start, " ", date_end
+            print client2, " ", service, " ", url, " ", date_start, " ", date_end
+            update_data_to_SiteAccess(url)
+            update_data_to_ServiceUtilizationStatistics(client, service, date_end)
+            update_data_to_ServiceUtilizationStatistics(client2, service, date_end)
+            
+        rp.delete()
+            
+    
+
+if __name__ == "__main__":
+    sys.exit(main())
+            
        # rp.delete()
             
     
